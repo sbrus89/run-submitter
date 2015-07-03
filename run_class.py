@@ -176,11 +176,12 @@ class TACCRun(Run):
         
     # submit the run job with a dependency on the prep job
     run_sub = 'run.sub'
-    if sub_prep == True:
+    if self.sub_prep == True:
       run_cmd = ["sbatch", '--dependency=afterok:'+self.job_id, run_sub]
     else:
       run_cmd = ["sbatch", run_sub]
-      output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE).communicate()[0]
+
+    output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE).communicate()[0]
       
     self.sub_prep = False
   
@@ -230,7 +231,7 @@ class CRCRun(TACCRun):
                     {'value':'#$ -N ' + job_name       , 'comment':'# job name\n'},
                     {'value':'#$ -q ' + queue_name     , 'comment':'# queue \n' },
                     {'value':'#$ -M sbrus@nd.edu'      , 'comment':'\n'},
-                    {'value':'#$ -m -abe'              , 'comment':'# email me when the job aborts/begins/ends \n' }]
+                    {'value':'#$ -m abe'               , 'comment':'# email me when the job aborts/begins/ends \n' }]
     if ncores > 1:
       self.content.append({'value':'#$ -pe mpi-' + cores_node + ' ' + cores, 'comment':'\n\n'})
       self.content.append({'value':'module load mvapich2/1.9-intel'        , 'comment':'\n\n'})
@@ -255,7 +256,7 @@ class CRCRun(TACCRun):
   
     # find the prep job id
     n = len(output_sp)
-    self.job_id = output_sp[n-1]
+    self.job_id = output_sp[2]
     
     self.sub_prep = True
     
@@ -270,11 +271,12 @@ class CRCRun(TACCRun):
         
     # submit the run job with a dependency on the prep job
     run_sub = 'run.sub'
-    if sub_prep == True:
+    if self.sub_prep == True:
       run_cmd = ["qsub", '-hold_jid '+self.job_id, run_sub]
     else:
       run_cmd = ["qsub", run_sub]
-      output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE).communicate()[0]
+
+    output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE).communicate()[0]
       
     self.sub_prep = False
   
