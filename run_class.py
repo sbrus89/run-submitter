@@ -15,7 +15,7 @@ class Run(object):
     
     self.case = case
     self.header = False
-    
+    self.sub_prep = False
     
     
   def input_file(self):      
@@ -110,6 +110,8 @@ class TACCRun(Run):
     
     shutil.copy(self.case['prep'], self.case['direc'])
     
+    
+    
   def run_file(self):
     mesh_name = self.case['mesh'].split("/")[-1]
     exe_name = self.case['exe'].split("/")[-1]
@@ -122,7 +124,8 @@ class TACCRun(Run):
     self.content.append({'value':'cd '+self.case['direc']                                        , 'comment':'\n'})
     self.content.append({'value':self.exe_cmd + ' -np '+ self.case['proc'] + ' ./' + exe_name    , 'comment':'\n'})
     self.content.append({'value':'./'+post_name                                                  , 'comment':'\n'})
-    self.content.append({'value':''                                                              , 'comment':'\n'})
+    #self.content.append({'value':'echo "' + job_name + ' Complete" | mail -s "' + job_name +' Complete" sbrus@nd.edu', 'comment':'\n'})
+    self.content.append({'value':''                                                              , 'comment':'\n'})   
     
     self.name = self.case['direc']+'run.sub'
     
@@ -144,13 +147,45 @@ class TACCRun(Run):
     self.header == True
     self.exe_cmd = 'ibrun'
     
-  def submit_prep(self,direc):
-    pass
     
+    
+  def submit_prep(self,direc):
+    # change to run directory
+    os.chdir(direc)
+    
+    # submit the prep job
+    prep_sub = 'prep.sub'
+    prep_cmd = ["sbatch", prep_sub]
+    output = subprocess.Popen(prep_cmd, stdout=subprocess.PIPE).communicate()[0]
+    output_sp = output.split()
+  
+    # find the prep job id
+    n = len(output_sp)
+    self.job_id = output_sp[n-1]
+    
+    self.sub_prep = True
+    
+    print prep_cmd
+    print output  
+  
     
     
   def submit_run(self,direc):
-    pass
+    # change to run directory
+    os.chdir(direc)    
+        
+    # submit the run job with a dependency on the prep job
+    run_sub = 'run.sub'
+    if sub_prep == True:
+      run_cmd = ["sbatch", '--dependency=afterok:'+self.job_id, run_sub]
+    else:
+      run_cmd = ["sbatch", run_sub]
+      output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE).communicate()[0]
+      
+    self.sub_prep = False
+  
+    print run_cmd
+    print output
   
   
   
@@ -207,10 +242,44 @@ class CRCRun(TACCRun):
     self.exe_cmd = 'mpirun'  
     
     
+            
+  def submit_prep(self,direc):
+    # change to run directory
+    os.chdir(direc)
+    
+    # submit the prep job
+    prep_sub = 'prep.sub'
+    prep_cmd = ["qsub", prep_sub]
+    output = subprocess.Popen(prep_cmd, stdout=subprocess.PIPE).communicate()[0]
+    output_sp = output.split()
+  
+    # find the prep job id
+    n = len(output_sp)
+    self.job_id = output_sp[n-1]
+    
+    self.sub_prep = True
+    
+    print prep_cmd
+    print output  
+  
     
     
-    
-    
+  def submit_run(self,direc):
+    # change to run directory
+    os.chdir(direc)    
+        
+    # submit the run job with a dependency on the prep job
+    run_sub = 'run.sub'
+    if sub_prep == True:
+      run_cmd = ["qsub", '-hold_jid '+self.job_id, run_sub]
+    else:
+      run_cmd = ["qsub", run_sub]
+      output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE).communicate()[0]
+      
+    self.sub_prep = False
+  
+    print run_cmd
+    print output    
     
     
     

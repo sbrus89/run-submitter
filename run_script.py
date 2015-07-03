@@ -43,8 +43,8 @@ for case in cases:
     os.makedirs(direc)      
   
   #run_case = run_class.Run(case)
-  run_case = run_class.TACCRun(case)
-  #run_case = run_class.CRCRun(case)  
+  #run_case = run_class.TACCRun(case)
+  run_case = run_class.CRCRun(case)  
   
   run_case.input_file()
   run_case.write_file()
