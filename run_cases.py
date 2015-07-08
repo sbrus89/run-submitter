@@ -13,7 +13,7 @@ run_queue = 'normal'
 prep_queue = 'serial'
 #prep_queue = 'proteus'
 
-exe_name = ['pdgswe_rk22','pdgswe_rk33','pdgswe_rk45']
+exe_name = 'pdgswe'
 prep_name = 'dgprep'
 post_name = 'dgpost'
 
@@ -21,6 +21,7 @@ grid_names = ['converge3']
 p_orders = ['1','2','3']
 ctp_orders = ['2','2','3']
 hpb_orders = ['1','2','3']
+rk_types = ['22','33','45']
 #timesteps = ['.5d0','.25d0','.125d0']
 #timesteps = ['.25d0','.125d0','.0625d0']
 #timesteps = ['.125d0','.0625d0','.03125d0']
@@ -44,27 +45,33 @@ for k,grid in enumerate(grid_names):
   for i,p in enumerate(p_orders):
     ctp = ctp_orders[i]
     dt = timesteps[i]
-    exe = exe_name[i]
+    rk = rk_types[i]
     rtime = run_time[i]
     for j in range(0,i+1):
       hbp = str(j+1)
       directory_name = run_path + grid+'/' + 'p'+p+'/' + 'ctp'+ctp+'/' + 'hbp'+hbp+'/'
       cases.append({'input':directory_name+input_name,
 	            'mesh':grid_path+grid ,
+	            
                     'p':p,
                     'ctp':ctp, 
-                    'dt':dt, 
                     'hbp':hbp, 
+                    
+                    'rk':rk,
+                    'dt':dt,                     
                     'tf':final_time,
                     'dramp':ramp_length,
+                    
                     'cf':fric_coef, 
+                    
                     'nlines':num_snaps,
                     'outdir':output_direc,
+                    
                     'npart':num_partitions, 
                     
                     'direc':directory_name,                    
                     'proc':processors,
-                    'exe':code_path+exe,
+                    'exe':code_path+exe_name,
                     'rtime':rtime,
                     'rqueue':run_queue.lower(),
                     

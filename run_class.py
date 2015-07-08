@@ -19,18 +19,33 @@ class Run(object):
     
     
   def input_file(self):      
-    self.content = [{'value':self.case['mesh']+'.grd'  ,  'comment':'! grid file \n'},
-                    {'value':self.case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'},
-                    {'value':self.case['p']            ,  'comment':'! p - polynomial order \n'},
-                    {'value':self.case['ctp']          ,  'comment':'! ctp - parametric coordinate transformation order \n'},
-                    {'value':self.case['hbp']          ,  'comment':'! hbp - bathymetry order \n'},
-                    {'value':self.case['dt']           ,  'comment':'! dt - timestep (seconds) \n'},
-                    {'value':self.case['tf']           ,  'comment':'! tf - final time (days) \n'},
-                    {'value':self.case['dramp']        ,  'comment':'! dramp - ramping parameter (days) \n'},
-                    {'value':self.case['cf']           ,  'comment':'! cf - friction coefficient \n'},
-                    {'value':self.case['nlines']       ,  'comment':'! lines - lines in output files \n'},
-                    {'value':self.case['outdir']       ,  'comment':'! output directory \n'},
-                    {'value':self.case['npart']        ,  'comment':'! npart - edge blocking parameter \n'}]
+    #self.content = [{'value':self.case['mesh']+'.grd'  ,  'comment':'! grid file \n'},
+                    #{'value':self.case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'},
+                    #{'value':self.case['p']            ,  'comment':'! p - polynomial order \n'},
+                    #{'value':self.case['ctp']          ,  'comment':'! ctp - parametric coordinate transformation order \n'},
+                    #{'value':self.case['hbp']          ,  'comment':'! hbp - bathymetry order \n'},
+                    #{'value':self.case['dt']           ,  'comment':'! dt - timestep (seconds) \n'},
+                    #{'value':self.case['tf']           ,  'comment':'! tf - final time (days) \n'},
+                    #{'value':self.case['dramp']        ,  'comment':'! dramp - ramping parameter (days) \n'},
+                    #{'value':self.case['cf']           ,  'comment':'! cf - friction coefficient \n'},
+                    #{'value':self.case['nlines']       ,  'comment':'! lines - lines in output files \n'},
+                    #{'value':self.case['outdir']       ,  'comment':'! output directory \n'},
+                    #{'value':self.case['npart']        ,  'comment':'! npart - edge blocking parameter \n'}]
+                    
+    self.content = [{'value':"grid_file = "+self.case['mesh']+'.grd'     ,  'comment':'! grid file \n'},
+                    {'value':"forcing_file = "+self.case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'},
+                    {'value':"p = "+self.case['p']                       ,  'comment':'! p - polynomial order \n'},
+                    {'value':"ctp = "+self.case['ctp']                   ,  'comment':'! ctp - parametric coordinate transformation order \n'},
+                    {'value':"hbp = "+self.case['hbp']                   ,  'comment':'! hbp - bathymetry order \n'},
+                    {'value':"rk = "+self.case['rk']                     ,  'comment':'! RK timestepping scheme \n'},                    
+                    {'value':"dt = "+self.case['dt']                     ,  'comment':'! dt - timestep (seconds) \n'},
+                    {'value':"tf = "+self.case['tf']                     ,  'comment':'! tf - final time (days) \n'},
+                    {'value':"dramp = "+self.case['dramp']               ,  'comment':'! dramp - ramping parameter (days) \n'},
+                    {'value':"cf = "+self.case['cf']                     ,  'comment':'! cf - friction coefficient \n'},
+                    {'value':"lines = "+self.case['nlines']              ,  'comment':'! lines - lines in output files \n'},
+                    {'value':"out_direc = "+self.case['outdir']          ,  'comment':'! output directory \n'},
+                    {'value':"npart = "+self.case['npart']               ,  'comment':'! npart - edge blocking parameter \n'}]                    
+                    
     self.name = self.case['input']
     
     shutil.copy(self.case['exe'], self.case['direc'])
