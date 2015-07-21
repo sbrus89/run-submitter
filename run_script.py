@@ -17,7 +17,7 @@ import run_class
 
 from run_cases import *
       
-pprint.pprint(cases)        
+pprint.pprint(cases)      
 
 #raise SystemExit(0)
 
@@ -28,34 +28,52 @@ pprint.pprint(cases)
 #     since all run parameters are specifed in the set-up section
 ########################################################################
 
-run_dirs = []
+run_cases = []
+bundle = {}
+n = 0
 for case in cases:
   
   direc = case['direc']
   proc = case['proc']
+  
+  if bundle_flag:
+    proc = case['proc']
+  else:
+    n = n + 1
+    proc = str(n)
 
   # create run directory path
-  run_dirs.append(direc)  
   print 'setting up directory: ' + direc  
   
   # make the directory if necessary
   if not os.path.exists(direc):
     os.makedirs(direc)      
   
-  #run_case = run_class.Run(case)
-  run_case = run_class.TACCRun(case)
-  #run_case = run_class.CRCRun(case)  
+  if proc not in bundle:
+    
+    #run_case = run_class.Run()
+    run_case = run_class.TACCRun()
+    #run_case = run_class.CRCRun() 
+    
+    bundle[proc] = run_case
+    
+  else:
+    
+    run_case = bundle[proc]
+    
+    
+  run_case.input_file(case)
+  run_case.write_file('input')
   
-  run_case.input_file()
-  run_case.write_file()
+  run_case.prep_file(case)
   
-  run_case.prep_file()
-  run_case.write_file()
+  run_case.run_file(case)
   
-  run_case.run_file()
-  run_case.write_file()
-              
-   
+for run_case in bundle.itervalues():
+  
+  run_case.write_file('prep')  
+  run_case.write_file('run')
+                 
   
 #raise SystemExit(0)
 
@@ -63,9 +81,8 @@ for case in cases:
 # Run cases
 #####################################################
   
-for direc in run_dirs:  
+  
+for run_case in bundle.itervalues():  
 
-  print direc  
-  run_case.submit_prep(direc)
-  print direc
-  run_case.submit_run(direc)
+  run_case.submit_prep()
+  run_case.submit_run()  

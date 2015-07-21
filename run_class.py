@@ -11,44 +11,44 @@ class Run(object):
   
 
   
-  def __init__(self,case):
+  def __init__(self):
     
-    self.case = case
-    self.header = False
+    self.prep_header = False
+    self.run_header = False
     self.sub_prep = False
     
     
-  def input_file(self):      
-    #self.content = [{'value':self.case['mesh']+'.grd'  ,  'comment':'! grid file \n'},
-                    #{'value':self.case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'},
-                    #{'value':self.case['p']            ,  'comment':'! p - polynomial order \n'},
-                    #{'value':self.case['ctp']          ,  'comment':'! ctp - parametric coordinate transformation order \n'},
-                    #{'value':self.case['hbp']          ,  'comment':'! hbp - bathymetry order \n'},
-                    #{'value':self.case['dt']           ,  'comment':'! dt - timestep (seconds) \n'},
-                    #{'value':self.case['tf']           ,  'comment':'! tf - final time (days) \n'},
-                    #{'value':self.case['dramp']        ,  'comment':'! dramp - ramping parameter (days) \n'},
-                    #{'value':self.case['cf']           ,  'comment':'! cf - friction coefficient \n'},
-                    #{'value':self.case['nlines']       ,  'comment':'! lines - lines in output files \n'},
-                    #{'value':self.case['outdir']       ,  'comment':'! output directory \n'},
-                    #{'value':self.case['npart']        ,  'comment':'! npart - edge blocking parameter \n'}]
+  def input_file(self,case):      
+    #self.inp_content = [{'value':case['mesh']+'.grd'  ,  'comment':'! grid file \n'},
+                    #{'value':case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'},
+                    #{'value':case['p']            ,  'comment':'! p - polynomial order \n'},
+                    #{'value':case['ctp']          ,  'comment':'! ctp - parametric coordinate transformation order \n'},
+                    #{'value':case['hbp']          ,  'comment':'! hbp - bathymetry order \n'},
+                    #{'value':case['dt']           ,  'comment':'! dt - timestep (seconds) \n'},
+                    #{'value':case['tf']           ,  'comment':'! tf - final time (days) \n'},
+                    #{'value':case['dramp']        ,  'comment':'! dramp - ramping parameter (days) \n'},
+                    #{'value':case['cf']           ,  'comment':'! cf - friction coefficient \n'},
+                    #{'value':case['nlines']       ,  'comment':'! lines - lines in output files \n'},
+                    #{'value':case['outdir']       ,  'comment':'! output directory \n'},
+                    #{'value':case['npart']        ,  'comment':'! npart - edge blocking parameter \n'}]
                     
-    self.content = [{'value':"grid_file = "+self.case['mesh']+'.grd'     ,  'comment':'! grid file \n'},
-                    {'value':"forcing_file = "+self.case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'},
-                    {'value':"p = "+self.case['p']                       ,  'comment':'! p - polynomial order \n'},
-                    {'value':"ctp = "+self.case['ctp']                   ,  'comment':'! ctp - parametric coordinate transformation order \n'},
-                    {'value':"hbp = "+self.case['hbp']                   ,  'comment':'! hbp - bathymetry order \n'},
-                    {'value':"rk = "+self.case['rk']                     ,  'comment':'! RK timestepping scheme \n'},                    
-                    {'value':"dt = "+self.case['dt']                     ,  'comment':'! dt - timestep (seconds) \n'},
-                    {'value':"tf = "+self.case['tf']                     ,  'comment':'! tf - final time (days) \n'},
-                    {'value':"dramp = "+self.case['dramp']               ,  'comment':'! dramp - ramping parameter (days) \n'},
-                    {'value':"cf = "+self.case['cf']                     ,  'comment':'! cf - friction coefficient \n'},
-                    {'value':"lines = "+self.case['nlines']              ,  'comment':'! lines - lines in output files \n'},
-                    {'value':"out_direc = "+self.case['outdir']          ,  'comment':'! output directory \n'},
-                    {'value':"npart = "+self.case['npart']               ,  'comment':'! npart - edge blocking parameter \n'}]                    
+    self.inp_content = [{'value':"grid_file = "+case['mesh']+'.grd' ,  'comment':'! grid file \n'},
+                    {'value':"forcing_file = "+case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'},
+                    {'value':"p = "+case['p']                       ,  'comment':'! p - polynomial order \n'},
+                    {'value':"ctp = "+case['ctp']                   ,  'comment':'! ctp - parametric coordinate transformation order \n'},
+                    {'value':"hbp = "+case['hbp']                   ,  'comment':'! hbp - bathymetry order \n'},
+                    {'value':"rk = "+case['rk']                     ,  'comment':'! RK timestepping scheme \n'},                    
+                    {'value':"dt = "+case['dt']                     ,  'comment':'! dt - timestep (seconds) \n'},
+                    {'value':"tf = "+case['tf']                     ,  'comment':'! tf - final time (days) \n'},
+                    {'value':"dramp = "+case['dramp']               ,  'comment':'! dramp - ramping parameter (days) \n'},
+                    {'value':"cf = "+case['cf']                     ,  'comment':'! cf - friction coefficient \n'},
+                    {'value':"lines = "+case['nlines']              ,  'comment':'! lines - lines in output files \n'},
+                    {'value':"out_direc = "+case['outdir']          ,  'comment':'! output directory \n'},
+                    {'value':"npart = "+case['npart']               ,  'comment':'! npart - edge blocking parameter \n'}]                    
                     
-    self.name = self.case['input']
+    self.inp_name = case['input']
     
-    shutil.copy(self.case['exe'], self.case['direc'])
+    shutil.copy(case['exe'], case['direc'])
     
     #f = open(direc + 'CPUtime.log','a+')  
     #f.write('\n')
@@ -56,47 +56,68 @@ class Run(object):
   
   
   
-  def prep_file(self):
-    pass
+  def prep_file(self,case):
+    self.prep_name = ''
+    self.prep_content = []
   
   
   
-  def run_file(self):
-    pass
+  def run_file(self,case):
+    self.run_name = ''
+    self.run_content = []
+    self.exe_name = case['exe'].split("/")[-1]
+    self.run_direc = case['direc']
     
 
                
-  def write_file(self):
+  def write_file(self,file_type):
     
-    f = open(self.name,'w')   
-    for line in self.content:
-      value = line['value']
-      comment = line['comment']    
-      spaces = 101 - len(value)    
-      f.write(value + spaces*' ' + comment)
-    f.close( )     
+    if file_type == 'input':
+      name = self.inp_name
+      content = self.inp_content
+    elif file_type == 'run':
+      name = self.run_name
+      content = self.run_content
+    elif file_type == 'prep':
+      name = self.prep_name
+      content = self.prep_content
+      
+      
+    if name != '':
+      f = open(name,'w')   
+      for line in content:
+        value = line['value']
+        comment = line['comment']    
+        spaces = 101 - len(value)    
+        f.write(value + spaces*' ' + comment)
+      f.close()     
     
-    self.header = False
     
     
-    
-  def submit_prep(self,direc):
+  def submit_prep(self):
     pass
     
     
     
-  def submit_run(self,direc):
+  def submit_run(self):
+
+    print self.run_direc        
+    
     # change to run directory
-    os.chdir(direc)
+    os.chdir(self.run_direc)
   
     # run
-    print "Running in: " + direc
-    exe_name = self.case['exe'].split("/")[-1]
-    run_cmd = ["./"+exe_name]
-    output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE).communicate()[0]
+    print "Running in: " + self.run_direc
+    run_cmd = ["./"+self.exe_name]
+    print run_cmd     
+    output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE)
+    
+    while output.poll() is None:
+      l = output.stdout.readline()
+      print l.rstrip('\n')
+    print output.stdout.read()
   
-    print run_cmd
-    print output        
+
     
 
 #####################################################################################################
@@ -107,49 +128,55 @@ class TACCRun(Run):
 
 
 
-  def prep_file(self): 
-    mesh_name = self.case['mesh'].split("/")[-1]
-    prep_name = self.case['prep'].split("/")[-1]
-    job_name = '_'.join([prep_name,mesh_name,'p'+self.case['p']])
-    cores = '1'
+  def prep_file(self,case): 
+    mesh_name = case['mesh'].split("/")[-1]
+    prep_name = case['prep'].split("/")[-1]
+    job_name = '_'.join([prep_name,mesh_name,'p'+case['p']])
+    sub_cores = '1'
+    run_cores = case['proc']
     
-    if self.header == False:
-      self.sub_header(job_name,self.case['pqueue'],self.case['ptime'],cores,self.case['alloc'])    
-    self.content.append({'value':'./'+ prep_name +' < prep.in' , 'comment':'\n'})
+    if self.prep_header == False:
+      self.prep_content = self.sub_header(job_name,case['pqueue'],case['ptime'],sub_cores,case['alloc']) 
+      self.prep_header = True
+    self.prep_content.append({'value':'cd '+case['direc']           , 'comment':'\n'})
+    self.prep_content.append({'value':'./'+ prep_name +' < prep.in' , 'comment':'\n'})
                     
-    f = open(self.case['direc']+'prep.in','w')
-    f.write(self.case['proc'])
+    f = open(case['direc']+'prep.in','w')
+    f.write(run_cores)
     f.close()
     
-    self.name = self.case['direc']+'prep.sub'  
+    self.prep_name = case['rdirec']+'prep_np'+run_cores+'.sub'  
+    self.prep_direc = case['rdirec']   
     
-    shutil.copy(self.case['prep'], self.case['direc'])
+    shutil.copy(case['prep'], case['direc'])
     
     
     
-  def run_file(self):
-    mesh_name = self.case['mesh'].split("/")[-1]
-    exe_name = self.case['exe'].split("/")[-1]
-    post_name = self.case['post'].split("/")[-1]
-    job_name = '_'.join([exe_name,mesh_name,'p'+self.case['p']])
-    cores = self.case['proc']
+  def run_file(self,case):
+    mesh_name = case['mesh'].split("/")[-1]
+    exe_name = case['exe'].split("/")[-1]
+    post_name = case['post'].split("/")[-1]
+    job_name = '_'.join([exe_name,mesh_name,'p'+case['p']])
+    cores = case['proc']
     
-    if self.header == False:
-      self.sub_header(job_name,self.case['rqueue'],self.case['rtime'],cores,self.case['alloc'])
-    self.content.append({'value':'cd '+self.case['direc']                                        , 'comment':'\n'})
-    self.content.append({'value':self.exe_cmd + ' -np '+ self.case['proc'] + ' ./' + exe_name    , 'comment':'\n'})
-    self.content.append({'value':'./'+post_name                                                  , 'comment':'\n'})
-    #self.content.append({'value':'echo "' + job_name + ' Complete" | mail -s "' + job_name +' Complete" sbrus@nd.edu', 'comment':'\n'})
-    self.content.append({'value':''                                                              , 'comment':'\n'})   
+    if self.run_header == False:
+      self.run_content = self.sub_header(job_name,case['rqueue'],case['rtime'],cores,case['alloc'])
+      self.run_header = True
+    self.run_content.append({'value':'cd '+case['direc']                                        , 'comment':'\n'})
+    self.run_content.append({'value':self.exe_cmd + ' -np '+ case['proc'] + ' ./' + exe_name    , 'comment':'\n'})
+    self.run_content.append({'value':'./'+post_name                                             , 'comment':'\n'})
+    #self.run_content.append({'value':'echo "' + job_name + ' Complete" | mail -s "' + job_name +' Complete" sbrus@nd.edu', 'comment':'\n'})
+    self.run_content.append({'value':''                                                         , 'comment':'\n'})   
     
-    self.name = self.case['direc']+'run.sub'
+    self.run_name = case['rdirec']+'run_np'+cores+'.sub'
+    self.run_direc = case['rdirec']
     
-    shutil.copy(self.case['post'], self.case['direc'])
+    shutil.copy(case['post'], case['direc'])
     
     
     
   def sub_header(self,job_name,queue,time,cores,alloc):
-    self.content = [{'value':'#!/bin/bash'                          , 'comment':'\n'},
+    content = [{'value':'#!/bin/bash'                          , 'comment':'\n'},
                     {'value':'#SBATCH -J ' + job_name               , 'comment':'# job name\n'},
                     {'value':'#SBATCH -o ' + job_name + '.o%j'      , 'comment':'# output and error file name (%j expands to jobID)\n'},
                     {'value':'#SBATCH -p ' + queue                  , 'comment':'# queue (partition) -- normal, development, etc.\n' },
@@ -159,17 +186,18 @@ class TACCRun(Run):
                     {'value':'#SBATCH --mail-type=end'              , 'comment':'# email me when the job finishes\n' },
                     {'value':'#SBATCH -n ' + cores                  , 'comment':'# total number of mpi tasks requested\n' },
                     {'value':'#SBATCH -A ' + alloc                  , 'comment':'\n\n'}]      
-    self.header == True
     self.exe_cmd = 'ibrun'
     
+    return content
     
     
-  def submit_prep(self,direc):
-    # change to run directory
-    os.chdir(direc)
+    
+  def submit_prep(self):
+
+    print self.prep_direc    
     
     # submit the prep job
-    prep_sub = 'prep.sub'
+    prep_sub = self.prep_name
     prep_cmd = ["sbatch", prep_sub]
     output = subprocess.Popen(prep_cmd, stdout=subprocess.PIPE).communicate()[0]
     output_sp = output.split()
@@ -185,25 +213,27 @@ class TACCRun(Run):
   
     
     
-  def submit_run(self,direc):
-    # change to run directory
-    os.chdir(direc)    
+  def submit_run(self):
+
+    print self.run_direc       
         
     # submit the run job with a dependency on the prep job
-    run_sub = 'run.sub'
+    run_sub = self.run_name
     if self.sub_prep == True:
       run_cmd = ["sbatch", '--dependency=afterok:'+self.job_id, run_sub]
     else:
       run_cmd = ["sbatch", run_sub]
-
+      
+    print run_cmd
     output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE).communicate()[0]
+    
+    while output.poll() is None:
+      l = output.stdout.readline()
+      print l.rstrip('\n')
+    print output.stdout.read()    
       
     self.sub_prep = False
-  
-    print run_cmd
-    print output
-  
-  
+   
   
     
 #####################################################################################################
@@ -242,29 +272,31 @@ class CRCRun(TACCRun):
 	print "  Number of cores must be less than " + str(max_cores)
 	raise SystemExit(0)
 
-    self.content = [{'value':'#!/bin/csh'              , 'comment':'\n\n'},
+    content = [{'value':'#!/bin/csh'              , 'comment':'\n\n'},
                     {'value':'#$ -N ' + job_name       , 'comment':'# job name\n'},
                     {'value':'#$ -q ' + queue_name     , 'comment':'# queue \n' },
                     {'value':'#$ -M sbrus@nd.edu'      , 'comment':'\n'},
                     {'value':'#$ -m abe'               , 'comment':'# email me when the job aborts/begins/ends \n' }]
     if ncores > 1:
-      self.content.append({'value':'#$ -pe mpi-' + cores_node + ' ' + cores, 'comment':'\n\n'})
-      self.content.append({'value':'module load mvapich2/1.9-intel'        , 'comment':'\n\n'})
+      content.append({'value':'#$ -pe mpi-' + cores_node + ' ' + cores, 'comment':'\n\n'})
+      content.append({'value':'module load mvapich2/1.9-intel'        , 'comment':'\n\n'})
     else:
-      self.content.append({'value':''                                      , 'comment':'\n'})
-      self.content.append({'value':'module load intel'                     , 'comment':'\n\n'})
+      content.append({'value':''                                      , 'comment':'\n'})
+      content.append({'value':'module load intel'                     , 'comment':'\n\n'})
+      
+    return content
                     
     self.header == True
     self.exe_cmd = 'mpirun'  
     
     
             
-  def submit_prep(self,direc):
-    # change to run directory
-    os.chdir(direc)
+  def submit_prep(self):
     
+    print self.prep_direc
+
     # submit the prep job
-    prep_sub = 'prep.sub'
+    prep_sub = self.prep_name
     prep_cmd = ["qsub", prep_sub]
     output = subprocess.Popen(prep_cmd, stdout=subprocess.PIPE).communicate()[0]
     output_sp = output.split()
@@ -280,12 +312,12 @@ class CRCRun(TACCRun):
   
     
     
-  def submit_run(self,direc):
-    # change to run directory
-    os.chdir(direc)    
-        
+  def submit_run(self):
+   
+    print self.run_direc    
+    
     # submit the run job with a dependency on the prep job
-    run_sub = 'run.sub'
+    run_sub = self.run_name
     if self.sub_prep == True:
       run_cmd = ["qsub", '-hold_jid '+self.job_id, run_sub]
     else:
