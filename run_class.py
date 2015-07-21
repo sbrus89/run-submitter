@@ -50,6 +50,10 @@ class Run(object):
     
     shutil.copy(case['exe'], case['direc'])
     
+    if 'copy_files' in case:
+      for cpfile in case['copy_files']:
+        shutil.copy(cpfile, case['direc'])
+    
     #f = open(direc + 'CPUtime.log','a+')  
     #f.write('\n')
     #f.close( )    
