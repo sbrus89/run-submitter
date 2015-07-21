@@ -15,8 +15,8 @@ run_queue = 'normal'
 prep_queue = 'serial'
 #prep_queue = 'proteus'
 
-exe_name = 'dgswe'
-#exe_name = 'pdgswe'
+#exe_name = 'dgswe'
+exe_name = 'pdgswe'
 prep_name = 'dgprep'
 post_name = 'dgpost'
 
@@ -38,12 +38,12 @@ output_direc = './'
 num_partitions = '1'
 
 # Run, grid, and executable paths
-run_path = '/home/sbrus/SmallProjects/run_script/test/'
-code_path = '/home/sbrus/Codes/dgswe/work/'
-grid_path = '/home/sbrus/Codes/dgswe/grids/'
-#run_path = '/work/01964/sbrus/dgswe_converge_bath_dt2/'
-#code_path = '/home1/01964/sbrus/dgswe/work/'
-#grid_path = '/home1/01964/sbrus/dgswe/grids/'
+#run_path = '/home/sbrus/SmallProjects/run_script/test/'
+#code_path = '/home/sbrus/Codes/dgswe/work/'
+#grid_path = '/home/sbrus/Codes/dgswe/grids/'
+run_path = '/work/01964/sbrus/dgswe_inlet_bath/'
+code_path = '/home1/01964/sbrus/dgswe/work/'
+grid_path = '/work/01964/sbrus/dgswe_inlet_bath/grids/'
 
 # set up cases list
 cases = []
@@ -57,7 +57,7 @@ for k,grid in enumerate(grid_names):
       directory_name = run_path + grid+'/' + 'p'+p+'/' + 'hbp'+hbp+'/'
       cases.append({'input':directory_name+input_name,
                     'mesh':grid_path+grid ,
-                    'copy_files':[grid_path+grid+"_hbp"+hbp+".d"]
+                    'copy_files':[grid_path+grid+'_hbp'+hbp+'.d'],
                     
                     'p':p,
                     'ctp':ctp_orders[0], 
