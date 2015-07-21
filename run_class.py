@@ -229,7 +229,7 @@ class TACCRun(Run):
       run_cmd = ["sbatch", run_sub]
       
     print run_cmd
-    output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE).communicate()[0]
+    output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE)
     
     while output.poll() is None:
       l = output.stdout.readline()
