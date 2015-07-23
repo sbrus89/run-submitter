@@ -1,8 +1,27 @@
 #!/usr/local/bin/python
 
 import os
+import sys
 import pprint
+import getopt
 import run_class
+
+try:
+  opts,args = getopt.getopt(sys.argv[1:],"dw",["dry","write"])
+except getopt.GetoptError:
+  print "Incorrect command line arguments"
+  raise SystemExit(0)
+
+dry_run = False
+write_only = False
+
+for opt,arg in opts:  
+  if opt in ["-d","--dry"]:
+    dry_run = True
+  elif opt in ["-w","--write"]:
+    write_only = True
+    
+  
 
 #############################################################
 # Set up cases
@@ -19,7 +38,8 @@ from run_cases import *
       
 pprint.pprint(cases)      
 
-#raise SystemExit(0)
+if dry_run == True:
+  raise SystemExit(0)
 
 ########################################################################
 # Create run directories and input files
@@ -75,7 +95,8 @@ for run_case in bundle.itervalues():
   run_case.write_file('run')
                  
   
-#raise SystemExit(0)
+if write_only == True:  
+  raise SystemExit(0)
 
 #####################################################
 # Run cases
