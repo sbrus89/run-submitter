@@ -34,6 +34,7 @@ class Run(object):
                     
     self.inp_content = [{'value':"grid_file = "+case['mesh']+'.grd' ,  'comment':'! grid file \n'},
                     {'value':"forcing_file = "+case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'},
+                    {'value':"bathy_file = "+case['bathy']          ,  'comment':'! high order bathymetry file \n'},                    
                     {'value':"p = "+case['p']                       ,  'comment':'! p - polynomial order \n'},
                     {'value':"ctp = "+case['ctp']                   ,  'comment':'! ctp - parametric coordinate transformation order \n'},
                     {'value':"hbp = "+case['hbp']                   ,  'comment':'! hbp - bathymetry order \n'},
@@ -50,9 +51,9 @@ class Run(object):
     
     shutil.copy(case['exe'], case['direc'])
     
-    if 'copy_files' in case:
-      for cpfile in case['copy_files']:
-        shutil.copy(cpfile, case['direc'])
+   # if 'copy_files' in case:
+   #   for cpfile in case['copy_files']:
+   #     shutil.copy(cpfile, case['direc'])
     
     #f = open(direc + 'CPUtime.log','a+')  
     #f.write('\n')
@@ -199,6 +200,7 @@ class TACCRun(Run):
   def submit_prep(self):
 
     print self.prep_direc    
+    os.chdir(self.prep_direc)
     
     # submit the prep job
     prep_sub = self.prep_name
@@ -219,7 +221,8 @@ class TACCRun(Run):
     
   def submit_run(self):
 
-    print self.run_direc       
+    print self.run_direc     
+    os.chdir(self.run_direc)  
         
     # submit the run job with a dependency on the prep job
     run_sub = self.run_name
@@ -298,6 +301,7 @@ class CRCRun(TACCRun):
   def submit_prep(self):
     
     print self.prep_direc
+    os.chdir(self.prep_direc)
 
     # submit the prep job
     prep_sub = self.prep_name
@@ -319,6 +323,7 @@ class CRCRun(TACCRun):
   def submit_run(self):
    
     print self.run_direc    
+    os.chdir(self.run_direc)
     
     # submit the run job with a dependency on the prep job
     run_sub = self.run_name

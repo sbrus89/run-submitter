@@ -57,7 +57,7 @@ for k,grid in enumerate(grid_names):
       directory_name = run_path + grid+'/' + 'p'+p+'/' + 'hbp'+hbp+'/'
       cases.append({'input':directory_name+input_name,
                     'mesh':grid_path+grid ,
-                    'copy_files':[grid_path+grid+'_hbp'+hbp+'.d'],
+                    'bathy':grid_path+grid+'_hbp'+hbp+'.d',
                     
                     'p':p,
                     'ctp':ctp_orders[0], 
