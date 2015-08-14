@@ -291,10 +291,11 @@ class CRCRun(TACCRun):
       content.append({'value':''                                      , 'comment':'\n'})
       content.append({'value':'module load intel'                     , 'comment':'\n\n'})
       
+    self.exe_cmd = 'mpirun'        
+      
     return content
                     
-    self.header == True
-    self.exe_cmd = 'mpirun'  
+
     
     
             

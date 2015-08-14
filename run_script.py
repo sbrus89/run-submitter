@@ -4,10 +4,11 @@ import os
 import sys
 import pprint
 import getopt
+import socket
 import run_class
 
 try:
-  opts,args = getopt.getopt(sys.argv[1:],"dw",["dry","write"])
+  opts,args = getopt.getopt(sys.argv[1:],"dw",["dry","write","chl","crc","tacc"])
 except getopt.GetoptError:
   print "Incorrect command line arguments"
   raise SystemExit(0)
@@ -15,13 +16,28 @@ except getopt.GetoptError:
 dry_run = False
 write_only = False
 
+hostname = socket.gethostname()
+hostname_sp = hostname.split(".")
+if len(hostname_sp) > 1:
+  host = ".".join(hostname_sp[1:])
+else:
+  host = hostname
+
 for opt,arg in opts:  
   if opt in ["-d","--dry"]:
     dry_run = True
   elif opt in ["-w","--write"]:
     write_only = True
-    
+  elif opt == "--chl":
+    host = "chl-tilos"
+  elif opt == "--crc":
+    host = "crc.nd.edu"
+  elif opt == "--tacc":
+    host = "stampede.tacc.utexas.edu"
   
+  
+  
+
 
 #############################################################
 # Set up cases
@@ -71,9 +87,12 @@ for case in cases:
   
   if proc not in bundle:
     
-    #run_case = run_class.Run()
-    run_case = run_class.TACCRun()
-    #run_case = run_class.CRCRun() 
+    if host == 'chl-tilos':
+      run_case = run_class.Run()
+    elif host == 'stampede.tacc.utexas.edu':
+      run_case = run_class.TACCRun()
+    elif host == 'crc.nd.edu':
+      run_case = run_class.CRCRun() 
     
     bundle[proc] = run_case
     
