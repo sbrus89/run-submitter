@@ -8,13 +8,14 @@ import socket
 import run_class
 
 try:
-  opts,args = getopt.getopt(sys.argv[1:],"dw",["dry","write","chl","crc","tacc"])
+  opts,args = getopt.getopt(sys.argv[1:],"dw",["dry","write","chl","crc","tacc","no-prep"])
 except getopt.GetoptError:
   print "Incorrect command line arguments"
   raise SystemExit(0)
 
 dry_run = False
 write_only = False
+prep = True
 
 hostname = socket.gethostname()
 hostname_sp = hostname.split(".")
@@ -34,6 +35,8 @@ for opt,arg in opts:
     host = "crc.nd.edu"
   elif opt == "--tacc":
     host = "stampede.tacc.utexas.edu"
+  elif opt == "--no-prep":
+    prep = False
   
   
   
@@ -124,5 +127,6 @@ if write_only == True:
   
 for run_case in bundle.itervalues():  
 
-  run_case.submit_prep()
+  if prep:
+    run_case.submit_prep()
   run_case.submit_run()  
