@@ -6,25 +6,30 @@ input_name = 'dgswe.inp'
 
 bundle_flag = False          # bundle runs with same number of processors into same submission script
                              # 'rdirec' needs to be the same for each bundle of runs
-processors = ['6','12','24','48','96','192','384','768']
+processors = ['24','48','96','192','384','768']
+#processors = ['24']
 prep_time = '00:20:00'
-run_time = ['01:00:00','01:00:00','01:00:00','01:00:00','01:00:00','01:00:00','01:00:00','01:00:00']
+run_time = ['01:00:00','01:00:00','01:00:00','01:00:00','01:00:00','01:00:00']
 
 allocation = 'TG-DMS080016N'
 
-run_queue = 'aegeaon'
+run_queue = 'aegaeon'
 prep_queue = 'proteus'
 
-exe_name = 'dgswe_mpi'
-prep_name = 'dgprep'
+#exe_name = 'dgswe_mpi'
+#prep_name = 'dgprep'
+#post_name = 'dgpost_nc'
+exe_name = 'dgswem_structure_mpi'
+prep_name = 'adcprep'
 post_name = 'dgpost_nc'
+
 
 grid_names = ['inlet3']
 p_orders = ['1','2','3']
 ctp_orders = ['1']
 hbp_orders = ['1']
 rk_types = ['22']
-timesteps = ['.01d0','.01d0','.01d0']
+timesteps = ['.1d0','.1d0','.1d0']
 
 final_time = '1d0'
 ramp_length = '.5d0'
@@ -34,7 +39,8 @@ output_direc = './'
 num_partitions = '1'
 
 # Run, grid, and executable paths
-run_path = '/home2/sbrus/dgswe_aegeaon_scaling/'
+#run_path = '/home2/sbrus/dgswe_aegeaon_scaling/'
+run_path = '/home2/sbrus/dgswem_structure_aegeaon_scaling/'
 code_path = '/home2/sbrus/dgswe/work/'
 grid_path = '/home2/sbrus/dgswe/grids/'
 
@@ -70,7 +76,7 @@ for k,cores in enumerate(processors):
                     'npart':num_partitions, 
                     
                     'direc':directory_name,    
-                    'rdirec':run_path,
+                    'rdirec':directory_name,
                     'proc':cores,
                     'exe':code_path+exe_name,
                     'rtime':rtime,

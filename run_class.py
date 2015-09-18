@@ -161,8 +161,9 @@ class TACCRun(Run):
     mesh_name = case['mesh'].split("/")[-1]
     exe_name = case['exe'].split("/")[-1]
     post_name = case['post'].split("/")[-1]
-    job_name = '_'.join([exe_name,mesh_name,'p'+case['p']])
     cores = case['proc']
+    job_name = '_'.join([exe_name,mesh_name,'p'+case['p'],'np'+cores])
+
     
     if self.run_header == False:
       self.run_content = self.sub_header(job_name,case['rqueue'],case['rtime'],cores,case['alloc'])
@@ -252,7 +253,7 @@ class CRCRun(TACCRun):
   
   def sub_header(self,job_name,queue,time,cores,alloc):
     
-    if queue != "zas" and queue != "athos" and queue != "proteus" and quene != "aegaeon":
+    if queue != "zas" and queue != "athos" and queue != "proteus" and queue != "aegaeon":
       print "  Invalid machine name"
       raise SystemExit(0)
         
@@ -271,8 +272,8 @@ class CRCRun(TACCRun):
       cores_node = '12'
       max_cores = 24
       mpi_module = 'mvapich2/1.9-intel'
-    elif quene == 'aegaeon':
-      quene_name = '*@@westerink_d12chas'
+    elif queue == 'aegaeon':
+      queue_name = '*@@westerink_d12chas'
       cores_node = '24'
       max_cores  = 1944
       mpi_module = 'mvapich2/2.1-intel-15.0-mlx'
@@ -298,7 +299,7 @@ class CRCRun(TACCRun):
       content.append({'value':'module load netcdf'                    , 'comment':'\n\n'})      
     else:
       content.append({'value':''                                      , 'comment':'\n'})
-      content.append({'value':'module load intel'                     , 'comment':'\n\n'})
+      content.append({'value':'module load intel/15.0'                , 'comment':'\n\n'})
       
     self.exe_cmd = 'mpirun'        
       
