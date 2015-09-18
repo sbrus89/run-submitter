@@ -19,33 +19,33 @@ class Run(object):
     
     
   def input_file(self,case):      
-    #self.inp_content = [{'value':case['mesh']+'.grd'  ,  'comment':'! grid file \n'},
-                    #{'value':case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'},
-                    #{'value':case['p']            ,  'comment':'! p - polynomial order \n'},
+    self.inp_content = [{'value':case['mesh']+'.grd'  ,  'comment':'! grid file \n'},
+                    {'value':case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'},
+                    {'value':case['p']            ,  'comment':'! p - polynomial order \n'},
                     #{'value':case['ctp']          ,  'comment':'! ctp - parametric coordinate transformation order \n'},
                     #{'value':case['hbp']          ,  'comment':'! hbp - bathymetry order \n'},
-                    #{'value':case['dt']           ,  'comment':'! dt - timestep (seconds) \n'},
-                    #{'value':case['tf']           ,  'comment':'! tf - final time (days) \n'},
-                    #{'value':case['dramp']        ,  'comment':'! dramp - ramping parameter (days) \n'},
-                    #{'value':case['cf']           ,  'comment':'! cf - friction coefficient \n'},
-                    #{'value':case['nlines']       ,  'comment':'! lines - lines in output files \n'},
-                    #{'value':case['outdir']       ,  'comment':'! output directory \n'},
-                    #{'value':case['npart']        ,  'comment':'! npart - edge blocking parameter \n'}]
+                    {'value':case['dt']           ,  'comment':'! dt - timestep (seconds) \n'},
+                    {'value':case['tf']           ,  'comment':'! tf - final time (days) \n'},
+                    {'value':case['dramp']        ,  'comment':'! dramp - ramping parameter (days) \n'},
+                    {'value':case['cf']           ,  'comment':'! cf - friction coefficient \n'},
+                    {'value':case['nlines']       ,  'comment':'! lines - lines in output files \n'},
+                    {'value':case['npart']        ,  'comment':'! npart - edge blocking parameter \n'},
+                    {'value':case['npart']        ,  'comment':'! npart - edge blocking parameter \n'}]
                     
-    self.inp_content = [{'value':"grid_file = "+case['mesh']+'.grd' ,  'comment':'! grid file \n'},
-                    {'value':"forcing_file = "+case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'},
-                    {'value':"bathy_file = "+case['bathy']          ,  'comment':'! high order bathymetry file \n'},                    
-                    {'value':"p = "+case['p']                       ,  'comment':'! p - polynomial order \n'},
-                    {'value':"ctp = "+case['ctp']                   ,  'comment':'! ctp - parametric coordinate transformation order \n'},
-                    {'value':"hbp = "+case['hbp']                   ,  'comment':'! hbp - bathymetry order \n'},
-                    {'value':"rk = "+case['rk']                     ,  'comment':'! RK timestepping scheme \n'},                    
-                    {'value':"dt = "+case['dt']                     ,  'comment':'! dt - timestep (seconds) \n'},
-                    {'value':"tf = "+case['tf']                     ,  'comment':'! tf - final time (days) \n'},
-                    {'value':"dramp = "+case['dramp']               ,  'comment':'! dramp - ramping parameter (days) \n'},
-                    {'value':"cf = "+case['cf']                     ,  'comment':'! cf - friction coefficient \n'},
-                    {'value':"lines = "+case['nlines']              ,  'comment':'! lines - lines in output files \n'},
-                    {'value':"out_direc = "+case['outdir']          ,  'comment':'! output directory \n'},
-                    {'value':"npart = "+case['npart']               ,  'comment':'! npart - edge blocking parameter \n'}]                    
+    #self.inp_content = [{'value':"grid_file = "+case['mesh']+'.grd' ,  'comment':'! grid file \n'},
+                    #{'value':"forcing_file = "+case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'},
+                    #{'value':"bathy_file = "+case['bathy']          ,  'comment':'! high order bathymetry file \n'},                    
+                    #{'value':"p = "+case['p']                       ,  'comment':'! p - polynomial order \n'},
+                    #{'value':"ctp = "+case['ctp']                   ,  'comment':'! ctp - parametric coordinate transformation order \n'},
+                    #{'value':"hbp = "+case['hbp']                   ,  'comment':'! hbp - bathymetry order \n'},
+                    #{'value':"rk = "+case['rk']                     ,  'comment':'! RK timestepping scheme \n'},                    
+                    #{'value':"dt = "+case['dt']                     ,  'comment':'! dt - timestep (seconds) \n'},
+                    #{'value':"tf = "+case['tf']                     ,  'comment':'! tf - final time (days) \n'},
+                    #{'value':"dramp = "+case['dramp']               ,  'comment':'! dramp - ramping parameter (days) \n'},
+                    #{'value':"cf = "+case['cf']                     ,  'comment':'! cf - friction coefficient \n'},
+                    #{'value':"lines = "+case['nlines']              ,  'comment':'! lines - lines in output files \n'},
+                    #{'value':"out_direc = "+case['outdir']          ,  'comment':'! output directory \n'},
+                    #{'value':"npart = "+case['npart']               ,  'comment':'! npart - edge blocking parameter \n'}]                    
                     
     self.inp_name = case['input']
     
@@ -252,22 +252,30 @@ class CRCRun(TACCRun):
   
   def sub_header(self,job_name,queue,time,cores,alloc):
     
-    if queue != "zas" and queue != "athos" and queue != "proteus":
+    if queue != "zas" and queue != "athos" and queue != "proteus" and quene != "aegaeon":
       print "  Invalid machine name"
       raise SystemExit(0)
         
     if queue == 'zas':
       queue_name = '*@@westerink_dqcopt'
       cores_node = '8'
-      max_cores = '512'
+      max_cores = 512
+      mpi_module = 'mvapich2/1.9-intel'
     elif queue == 'athos':
       queue_name = '*@@westerink_d6cneh'
       cores_node = '12'
-      max_cores = '996'
+      max_cores = 996
+      mpi_module = 'mvapich2/1.9-intel'    
     elif queue == 'proteus':
       queue_name = '*@@westerink_graphics'
       cores_node = '12'
       max_cores = 24
+      mpi_module = 'mvapich2/1.9-intel'
+    elif quene == 'aegaeon':
+      quene_name = '*@@westerink_d12chas'
+      cores_node = '24'
+      max_cores  = 1944
+      mpi_module = 'mvapich2/2.1-intel-15.0-mlx'
     
     ncores = int(cores)
     
@@ -286,7 +294,8 @@ class CRCRun(TACCRun):
                     {'value':'#$ -m abe'               , 'comment':'# email me when the job aborts/begins/ends \n' }]
     if ncores > 1:
       content.append({'value':'#$ -pe mpi-' + cores_node + ' ' + cores, 'comment':'\n\n'})
-      content.append({'value':'module load mvapich2/1.9-intel'        , 'comment':'\n\n'})
+      content.append({'value':'module load ' + mpi_module             , 'comment':'\n'})
+      content.append({'value':'module load netcdf'                    , 'comment':'\n\n'})      
     else:
       content.append({'value':''                                      , 'comment':'\n'})
       content.append({'value':'module load intel'                     , 'comment':'\n\n'})
