@@ -16,6 +16,17 @@ class Run(object):
     self.prep_header = False
     self.run_header = False
     self.sub_prep = False
+    #self.inp_content = []
+    #self.inp_name = ''
+    #self.prep_content = []
+    #self.prep_name = ''
+    #self.run_content = []
+    #self.run_name = ''
+    #self.exe_name = ''
+    #self.run_direc = ''
+    #self.cores = ''
+    #self.exe_cmd = ''
+    #self.job_id = ''
     
     
   def input_file(self,case):      
@@ -51,6 +62,8 @@ class Run(object):
     
     shutil.copy(case['exe'], case['direc'])
     
+    self.write_file(self.inp_name,self.inp_content)
+    
    # if 'copy_files' in case:
    #   for cpfile in case['copy_files']:
    #     shutil.copy(cpfile, case['direc'])
@@ -75,17 +88,8 @@ class Run(object):
     
 
                
-  def write_file(self,file_type):
+  def write_file(self,name,content):
     
-    if file_type == 'input':
-      name = self.inp_name
-      content = self.inp_content
-    elif file_type == 'run':
-      name = self.run_name
-      content = self.run_content
-    elif file_type == 'prep':
-      name = self.prep_name
-      content = self.prep_content
       
       
     if name != '':
@@ -161,12 +165,12 @@ class TACCRun(Run):
     mesh_name = case['mesh'].split("/")[-1]
     exe_name = case['exe'].split("/")[-1]
     post_name = case['post'].split("/")[-1]
-    cores = case['proc']
-    job_name = '_'.join([exe_name,mesh_name,'p'+case['p'],'np'+cores])
+    self.cores = case['proc']
+    job_name = '_'.join([exe_name,mesh_name,'p'+case['p'],'np'+self.cores])
 
     
     if self.run_header == False:
-      self.run_content = self.sub_header(job_name,case['rqueue'],case['rtime'],cores,case['alloc'])
+      self.run_content = self.sub_header(job_name,case['rqueue'],case['rtime'],self.cores,case['alloc'])
       self.run_header = True
     self.run_content.append({'value':'cd '+case['direc']                                        , 'comment':'\n'})
     self.run_content.append({'value':self.exe_cmd + ' -np '+ case['proc'] + ' ./' + exe_name    , 'comment':'\n'})
@@ -174,7 +178,7 @@ class TACCRun(Run):
     #self.run_content.append({'value':'echo "' + job_name + ' Complete" | mail -s "' + job_name +' Complete" sbrus@nd.edu', 'comment':'\n'})
     self.run_content.append({'value':''                                                         , 'comment':'\n'})   
     
-    self.run_name = case['rdirec']+'run_np'+cores+'.sub'
+    self.run_name = case['rdirec']+'run_np'+self.cores+'.sub'
     self.run_direc = case['rdirec']
     
     shutil.copy(case['post'], case['direc'])
@@ -259,30 +263,38 @@ class CRCRun(TACCRun):
         
     if queue == 'zas':
       queue_name = '*@@westerink_dqcopt'
-      cores_node = '8'
+      node_name = 'dqcopt'
+      node_size = '8'
+      node_limit = (1,64)
       max_cores = 512
       mpi_module = 'mvapich2/1.9-intel'
     elif queue == 'athos':
       queue_name = '*@@westerink_d6cneh'
-      cores_node = '12'
+      node_name = 'd6cneh'
+      node_size = '12'
+      node_limit = (1,83)
       max_cores = 996
       mpi_module = 'mvapich2/1.9-intel'    
     elif queue == 'proteus':
       queue_name = '*@@westerink_graphics'
-      cores_node = '12'
+      node_name = 'proteus'
+      node_size = '12'
+      node_limit = (1,2)
       max_cores = 24
       mpi_module = 'mvapich2/1.9-intel'
     elif queue == 'aegaeon':
       queue_name = '*@@westerink_d12chas'
-      cores_node = '24'
+      queue_name = 'd12chas'
+      node_size = '24'
+      node_limit = (20,81)
       max_cores  = 1944
       mpi_module = 'mvapich2/2.1-intel-15.0-mlx'
     
     ncores = int(cores)
     
     if ncores > 1:  
-      if ncores % int(cores_node) != 0:
-        print "  Number of cores must be a multiple of " + cores_node
+      if ncores % int(node_size) != 0:
+        print "  Number of cores must be a multiple of " + node_size
         raise SystemExit(0)
       if ncores > max_cores:
 	print "  Number of cores must be less than " + str(max_cores)
@@ -294,7 +306,7 @@ class CRCRun(TACCRun):
                     {'value':'#$ -M sbrus@nd.edu'      , 'comment':'\n'},
                     {'value':'#$ -m abe'               , 'comment':'# email me when the job aborts/begins/ends \n' }]
     if ncores > 1:
-      content.append({'value':'#$ -pe mpi-' + cores_node + ' ' + cores, 'comment':'\n\n'})
+      content.append({'value':'#$ -pe mpi-' + node_size + ' ' + cores, 'comment':'\n\n'})
       content.append({'value':'module load ' + mpi_module             , 'comment':'\n'})
       content.append({'value':'module load netcdf'                    , 'comment':'\n\n'})      
     else:
@@ -319,7 +331,7 @@ class CRCRun(TACCRun):
     prep_cmd = ["qsub", prep_sub]
     output = subprocess.Popen(prep_cmd, stdout=subprocess.PIPE).communicate()[0]
     output_sp = output.split()
-  
+    
     # find the prep job id
     n = len(output_sp)
     self.job_id = output_sp[2]

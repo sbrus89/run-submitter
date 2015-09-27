@@ -104,17 +104,14 @@ for case in cases:
     run_case = bundle[proc]
     
     
-  run_case.input_file(case)
-  run_case.write_file('input')
-  
-  run_case.prep_file(case)
-  
-  run_case.run_file(case)
+  run_case.input_file(case) # Create and write input file
+  run_case.prep_file(case)  # Create/build prep file 
+  run_case.run_file(case)   # Create/build run file
   
 for run_case in bundle.itervalues():
   
-  run_case.write_file('prep')  
-  run_case.write_file('run')
+  run_case.write_file(run_case.prep_name,run_case.prep_content)  
+  run_case.write_file(run_case.run_name, run_case.run_content)
                  
   
 if write_only == True:  
@@ -127,6 +124,7 @@ if write_only == True:
   
 for run_case in bundle.itervalues():  
 
+  print run_case.cores
   if prep:
-    run_case.submit_prep()
+    run_case.submit_prep()  
   run_case.submit_run()  
