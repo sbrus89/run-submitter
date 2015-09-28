@@ -10,6 +10,7 @@
 ##processors = ['24']
 #prep_time = '00:20:00'
 #run_time = ['01:00:00','01:00:00','01:00:00','01:00:00','01:00:00','01:00:00']
+#max_proc = 768
 
 #allocation = 'TG-DMS080016N'
 
@@ -114,6 +115,7 @@
 #processors = ['12']
 #prep_time = '00:5:00'
 #run_time = ['06:00:00','06:00:00','06:00:00']
+#max_proc = 768
 
 #allocation = 'TG-DMS080016N'
 
@@ -210,6 +212,7 @@
 #processors = ['32']
 #prep_time = '00:20:00'
 #run_time = ['06:00:00','06:00:00','06:00:00']
+#max_proc = 768
 
 #allocation = 'TG-DMS080016N'
 
@@ -354,6 +357,7 @@ bundle_flag = False          # bundle runs with same number of processors into s
 processors = ['96','192','192','384','768']
 prep_time = '00:20:00'
 run_time = ['06:00:00','03:00:00','01:30:00','01:30:00','01:30:00']
+max_proc = 800
 
 allocation = 'TG-DMS080016N'
 
@@ -362,9 +366,9 @@ run_queue = 'aegaeon'
 #prep_queue = 'serial'
 prep_queue = 'proteus'
 
-exe_name = 'dgswe'
+exe_name = 'dgswe_mpi'
 prep_name = 'dgprep'
-post_name = 'dgpost'
+post_name = 'dgpost_nc'
 
 grid_names = ['inlet6']
 p_orders = ['1','2','3']
@@ -381,12 +385,9 @@ output_direc = './'
 num_partitions = '1'
 
 # Run, grid, and executable paths
-run_path = '/home/sbrus/SmallProjects/run_script/test/'
-code_path = '/home/sbrus/Codes/dgswe/work/'
-grid_path = '/home/sbrus/Codes/dgswe/grids/'
-#run_path = '/work/01964/sbrus/dgswe_converge_bath_dt2/'
-#code_path = '/home1/01964/sbrus/dgswe/work/'
-#grid_path = '/home1/01964/sbrus/dgswe/grids/'
+run_path = '/home2/sbrus/dgswe_aegeaon_scaling/'
+code_path = '/home2/sbrus/dgswe_aegeaon_scaling/inlet6/'
+grid_path = '/home2/sbrus/dgswe/grids/'
 
 # set up cases list
 cases = []

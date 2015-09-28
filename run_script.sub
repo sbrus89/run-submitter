@@ -1,0 +1,8 @@
+#!/bin/csh 
+
+#$ -N run_script
+#$ -M sbrus@nd.edu 
+#$ -m abe 
+#$ -q *@@westerink_graphics
+
+python run_script.py --queue

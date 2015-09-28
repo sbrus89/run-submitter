@@ -16,6 +16,7 @@ class Run(object):
     self.prep_header = False
     self.run_header = False
     self.sub_prep = False
+    self.sub_run = False
     #self.inp_content = []
     #self.inp_name = ''
     #self.prep_content = []
@@ -244,8 +245,8 @@ class TACCRun(Run):
       print l.rstrip('\n')
     print output.stdout.read()    
       
-    self.sub_prep = False
-   
+    self.sub_prep = False # not sure why this is needed
+    self.sub_run = True
   
     
 #####################################################################################################
@@ -257,41 +258,17 @@ class CRCRun(TACCRun):
   
   def sub_header(self,job_name,queue,time,cores,alloc):
     
-    if queue != "zas" and queue != "athos" and queue != "proteus" and queue != "aegaeon":
-      print "  Invalid machine name"
-      raise SystemExit(0)
-        
-    if queue == 'zas':
-      queue_name = '*@@westerink_dqcopt'
-      node_name = 'dqcopt'
-      node_size = '8'
-      node_limit = (1,64)
-      max_cores = 512
-      mpi_module = 'mvapich2/1.9-intel'
-    elif queue == 'athos':
-      queue_name = '*@@westerink_d6cneh'
-      node_name = 'd6cneh'
-      node_size = '12'
-      node_limit = (1,83)
-      max_cores = 996
-      mpi_module = 'mvapich2/1.9-intel'    
-    elif queue == 'proteus':
-      queue_name = '*@@westerink_graphics'
-      node_name = 'proteus'
-      node_size = '12'
-      node_limit = (1,2)
-      max_cores = 24
-      mpi_module = 'mvapich2/1.9-intel'
-    elif queue == 'aegaeon':
-      queue_name = '*@@westerink_d12chas'
-      queue_name = 'd12chas'
-      node_size = '24'
-      node_limit = (20,81)
-      max_cores  = 1944
-      mpi_module = 'mvapich2/2.1-intel-15.0-mlx'
-    
     ncores = int(cores)
+
+    info = self.machine_info(queue)
     
+    queue_name = info['queue_name']
+    node_name = info['node_name']
+    node_size = info['node_size']
+    node_limit = info['node_limit']
+    max_cores = info['max_cores']
+    mpi_module = info['mpi_module']
+
     if ncores > 1:  
       if ncores % int(node_size) != 0:
         print "  Number of cores must be a multiple of " + node_size
@@ -316,7 +293,48 @@ class CRCRun(TACCRun):
     self.exe_cmd = 'mpirun'        
       
     return content
+
+
+
+
                     
+  def machine_info(self,queue):
+
+    if queue != "zas" and queue != "athos" and queue != "proteus" and queue != "aegaeon":
+      print "  Invalid machine name"
+      raise SystemExit(0)
+
+    info = {}
+    if queue == 'zas':
+      info['queue_name'] = '*@@westerink_dqcopt'
+      info['node_name'] = 'dqcopt'
+      info['node_size'] = '8'
+      info['node_limit'] = (1,64)
+      info['max_cores'] = 512
+      info['mpi_module'] = 'mvapich2/1.9-intel'
+    elif queue == 'athos':
+      info['queue_name'] = '*@@westerink_d6cneh'
+      info['node_name'] = 'd6cneh'
+      info['node_size'] = '12'
+      info['node_limit'] = (1,83)
+      info['max_cores'] = 996
+      info['mpi_module'] = 'mvapich2/1.9-intel'
+    elif queue == 'proteus':
+      info['queue_name'] = '*@@westerink_graphics'
+      info['node_name'] = 'proteus'
+      info['node_size'] = '12'
+      info['node_limit'] = (1,2)
+      info['max_cores'] = 24
+      info['mpi_module'] = 'mvapich2/1.9-intel'
+    elif queue == 'aegaeon':
+      info['queue_name'] = '*@@westerink_d12chas'
+      info['node_name'] = 'd12chas'
+      info['node_size'] = '24'
+      info['node_limit'] = (20,81)
+      info['max_cores']  = 1944
+      info['mpi_module'] = 'mvapich2/2.1-intel-15.0-mlx'
+
+    return info
 
     
     
@@ -357,7 +375,8 @@ class CRCRun(TACCRun):
 
     output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE).communicate()[0]
       
-    self.sub_prep = False
+    self.sub_prep = False # not sure why this is needed
+    self.sub_run = True
   
     print run_cmd
     print output    

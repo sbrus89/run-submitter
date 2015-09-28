@@ -6,9 +6,12 @@ import pprint
 import getopt
 import socket
 import run_class
+import run_check
+import subprocess
+import time
 
 try:
-  opts,args = getopt.getopt(sys.argv[1:],"dw",["dry","write","chl","crc","tacc","no-prep"])
+  opts,args = getopt.getopt(sys.argv[1:],"dw",["dry","write","chl","crc","tacc","no-prep","queue"])
 except getopt.GetoptError:
   print "Incorrect command line arguments"
   raise SystemExit(0)
@@ -16,6 +19,7 @@ except getopt.GetoptError:
 dry_run = False
 write_only = False
 prep = True
+queue = False
 
 hostname = socket.gethostname()
 hostname_sp = hostname.split(".")
@@ -37,7 +41,8 @@ for opt,arg in opts:
     host = "stampede.tacc.utexas.edu"
   elif opt == "--no-prep":
     prep = False
-  
+  elif opt == "--queue":
+    queue = True
   
   
 
@@ -54,6 +59,8 @@ for opt,arg in opts:
 
 
 from run_cases import *
+
+run_check.check_cases(cases)
       
 pprint.pprint(cases)      
 
@@ -120,11 +127,51 @@ if write_only == True:
 #####################################################
 # Run cases
 #####################################################
-  
-  
-for run_case in bundle.itervalues():  
 
-  print run_case.cores
-  if prep:
-    run_case.submit_prep()  
-  run_case.submit_run()  
+ncases = len(bundle)
+nsub = 0
+delay = 60
+
+if queue:
+
+  while 1:
+  
+#    user = 'zcobell' 
+    user = 'sbrus'
+    qstat_cmd = ['qstat','-u',user]
+    output = subprocess.Popen(qstat_cmd, stdout=subprocess.PIPE).communicate()[0]
+    user_jobs = [x.split() for x in output.splitlines()[2:]]
+    pprint.pprint(user_jobs)
+
+    total_cores = 0 
+    for job in user_jobs:
+      cores = int(job[-1])
+      total_cores = total_cores + cores
+
+    if total_cores <= max_proc:
+      proj_cores = total_cores
+
+      for run_case in bundle.itervalues():
+        if run_case.sub_run == False:
+          proj_cores = proj_cores + int(run_case.cores)
+
+          if proj_cores <= max_proc: 
+            if prep:
+              run_case.submit_prep()
+            run_case.submit_run()
+            nsub = nsub + 1
+            print "nsub = ", nsub
+
+    if nsub == ncases:
+      break
+
+    time.sleep(delay)
+
+else:      
+
+  for run_case in bundle.itervalues():  
+
+    print run_case.cores
+    if prep:
+      run_case.submit_prep()  
+    run_case.submit_run()  
