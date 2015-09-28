@@ -132,7 +132,7 @@ if write_only == True:
 #####################################################
 
 bundle_values = bundle.values()
-bundle_values.sort(key=lambda x: int(x.cores))
+bundle_values.sort(key=lambda x: int(x.cores), reverse=True)
 
 ncases = len(bundle_values)
 nsub = 0
