@@ -354,7 +354,7 @@ input_name = 'dgswe.inp'
 
 bundle_flag = False          # bundle runs with same number of processors into same submission script
                              # 'rdirec' needs to be the same for each bundle of runs
-processors = ['96','192','192','384','768']
+processors = ['96','192','384','768']
 prep_time = '00:20:00'
 run_time = ['06:00:00','03:00:00','01:30:00','01:30:00','01:30:00']
 max_proc = 800

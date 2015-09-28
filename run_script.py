@@ -9,6 +9,7 @@ import run_class
 import run_check
 import subprocess
 import time
+import getpass
 
 try:
   opts,args = getopt.getopt(sys.argv[1:],"dw",["dry","write","chl","crc","tacc","no-prep","queue"])
@@ -27,6 +28,8 @@ if len(hostname_sp) > 1:
   host = ".".join(hostname_sp[1:])
 else:
   host = hostname
+
+user = getpass.getuser()
 
 for opt,arg in opts:  
   if opt in ["-d","--dry"]:
@@ -128,7 +131,10 @@ if write_only == True:
 # Run cases
 #####################################################
 
-ncases = len(bundle)
+bundle_values = bundle.values()
+bundle_values.sort(key=lambda x: int(x.cores))
+
+ncases = len(bundle_values)
 nsub = 0
 delay = 60
 
@@ -136,22 +142,23 @@ if queue:
 
   while 1:
   
-#    user = 'zcobell' 
-    user = 'sbrus'
+    # get and process qstat information
     qstat_cmd = ['qstat','-u',user]
     output = subprocess.Popen(qstat_cmd, stdout=subprocess.PIPE).communicate()[0]
     user_jobs = [x.split() for x in output.splitlines()[2:]]
     pprint.pprint(user_jobs)
 
+    # add total cores in use
     total_cores = 0 
     for job in user_jobs:
       cores = int(job[-1])
       total_cores = total_cores + cores
 
+    # attempt to submit runs
     if total_cores <= max_proc:
       proj_cores = total_cores
 
-      for run_case in bundle.itervalues():
+      for run_case in bundle_values:
         if run_case.sub_run == False:
           proj_cores = proj_cores + int(run_case.cores)
 
@@ -169,7 +176,7 @@ if queue:
 
 else:      
 
-  for run_case in bundle.itervalues():  
+  for run_case in bundle_values:  
 
     print run_case.cores
     if prep:
