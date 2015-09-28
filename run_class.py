@@ -141,7 +141,7 @@ class TACCRun(Run):
   def prep_file(self,case): 
     mesh_name = case['mesh'].split("/")[-1]
     prep_name = case['prep'].split("/")[-1]
-    job_name = '_'.join([prep_name,mesh_name,'p'+case['p']])
+    job_name = '_'.join([prep_name,mesh_name,'p'+case['p'],'np'+case['proc']])
     sub_cores = '1'
     run_cores = case['proc']
     
@@ -166,9 +166,9 @@ class TACCRun(Run):
     mesh_name = case['mesh'].split("/")[-1]
     exe_name = case['exe'].split("/")[-1]
     post_name = case['post'].split("/")[-1]
-    self.cores = case['proc']
-    job_name = '_'.join([exe_name,mesh_name,'p'+case['p'],'np'+self.cores])
+    job_name = '_'.join([exe_name,mesh_name,'p'+case['p'],'np'+case['proc']])
 
+    self.cores = case['proc']
     
     if self.run_header == False:
       self.run_content = self.sub_header(job_name,case['rqueue'],case['rtime'],self.cores,case['alloc'])
