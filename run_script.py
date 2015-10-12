@@ -146,7 +146,7 @@ if queue:
     qstat_cmd = ['qstat','-u',user]
     output = subprocess.Popen(qstat_cmd, stdout=subprocess.PIPE).communicate()[0]
     user_jobs = [x.split() for x in output.splitlines()[2:]]
-    pprint.pprint(user_jobs)
+    #pprint.pprint(user_jobs)
 
     # add total cores in use
     total_cores = 0 
@@ -155,22 +155,35 @@ if queue:
       total_cores = total_cores + cores
 
     # attempt to submit runs
+    sub = False
     if total_cores <= max_proc:
       proj_cores = total_cores
 
-      for run_case in bundle_values:
-        if run_case.sub_run == False:
-          proj_cores = proj_cores + int(run_case.cores)
+      for run_case in bundle_values:                    # Loop through runs
+        if run_case.sub_run == False:                   # Make sure runs haven't been submitted
+          proj_cores = proj_cores + int(run_case.cores) # Add cores to projected total
 
-          if proj_cores <= max_proc: 
+          if proj_cores <= max_proc:                    # Submit if projected total is below max
             if prep:
               run_case.submit_prep()
-            run_case.submit_run()
+            run_case.submit_run()                       
             nsub = nsub + 1
-            print "nsub = ", nsub
+            sub = True
+            print "Number of submitted jobs = " +  str(nsub) + "/" + str(ncases)
+            total_cores = total_cores + int(run_case.cores)
 
     if nsub == ncases:
       break
+
+    print "Cores remaining: " + str(max_proc-total_cores) + " (" + str(total_cores) + "/" + str(max_proc) + " cores in use)"
+
+    if sub:
+      print "Jobs waiting: "
+      i = 0
+      for run_case in bundle_values:
+        if run_case.sub_run == False:
+          i = i + 1
+          print "  " + str(i) + ") " + run_case.run_name + " (" + run_case.cores + " cores)"
 
     time.sleep(delay)
 
