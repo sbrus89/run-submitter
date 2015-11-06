@@ -124,8 +124,22 @@ for run_case in bundle.itervalues():
   run_case.write_file(run_case.run_name, run_case.run_content)
                  
   
-if write_only == True:  
+
+#####################################################
+# Write error input file if defined
+#####################################################
+
+try:
+  error
+except NameError:
+  pass
+else:
+  print "writing error input file"
+  run_case.write_file(run_path + 'error.inp',error)
+
+if write_only == True:
   raise SystemExit(0)
+
 
 #####################################################
 # Run cases
@@ -195,3 +209,4 @@ else:
     if prep:
       run_case.submit_prep()  
     run_case.submit_run()  
+
