@@ -226,12 +226,12 @@ bundle_flag = False          # bundle runs with same number of processors into s
 processors = ['24','24','48','96']
 prep_time = '00:20:00'
 run_time = ['06:00:00','06:00:00','06:00:00','06:00:00']
-max_proc = 501
+max_proc = 500
 
 allocation = 'TG-DMS080016N'
 
-run_queue = 'aegaeon'
-prep_queue = 'aegaeon'
+run_queue = 'zas'
+prep_queue = 'zas'
 
 
 exe_name = 'dgswe_mpi'
@@ -260,9 +260,9 @@ output_direc = './'
 num_partitions = '1'
 
 # Run, grid, and executable paths
-run_path = '/home2/sbrus/dgswe_converge_curve_rimls2/'
-code_path = '/home2/sbrus/dgswe_converge_curve_rimls2/code/'
-grid_path = '/home2/sbrus/dgswe_converge_curve_rimls2/grids/'
+run_path = '/home2/sbrus/dgswe_converge_curve_rimls6/'
+code_path = '/home2/sbrus/dgswe_converge_curve_rimls6/code/'
+grid_path = '/home2/sbrus/dgswe_converge_curve_rimls6/grids/'
 
 # set up cases list
 cases = []
@@ -340,6 +340,24 @@ for i,p in enumerate(p_orders):
       error.append({'value':'!'+grid_path+grid_names[0]+'.grd' , 'comment':'! coarsest grid file                                     \n'})
       error.append({'value':'!'+ctp                            , 'comment':'! coarsest grid ctp                                      \n'})
       error.append({'value':''                                 , 'comment':'                                                         \n'})
+
+# Set up rimls imput file
+rimls = []
+r = '1.5d0'
+sigma_n = '1.5d0'
+for i,p in enumerate(p_orders):
+  for k,grid in enumerate(grid_names):
+    dt = timesteps[k][i]
+
+    rimls.append({'value':'!'+grid_path+'converge2_bath_dble.grd' , 'comment':'! base grid - used to determine the rimls surface               \n'})
+    rimls.append({'value':'!'+grid_path+grid+'.grd'               , 'comment':'! eval grid - used to determine rimls surface evaluation points \n'})
+    rimls.append({'value':'!'+p                                   , 'comment':'! ctp - parametric coordinate transformation order              \n'})
+    rimls.append({'value':'!'+'1d0'                               , 'comment':'! Erad - radius of Earth                                        \n'})
+    rimls.append({'value':'!'+'0d0,0d0'                           , 'comment':'! lambda0,phi0 - center of CPP coordinate system                \n'})
+    rimls.append({'value':'!'+r                                   , 'comment':'! r - muliplier for search radius (1.5 - 4.0)                   \n'})
+    rimls.append({'value':'!'+sigma_n                             , 'comment':'! sigma_n - smoothing parameter (0.5 - 1.5)                     \n'})
+    rimls.append({'value':'!'+'./'                                , 'comment':'! output directory                                              \n'})
+    rimls.append({'value':''                                      , 'comment':'                                                                \n'})
 
 
 
