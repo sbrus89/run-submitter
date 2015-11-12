@@ -135,7 +135,31 @@ except NameError:
   pass
 else:
   print "writing error input file"
-  run_case.write_file(run_path + 'error.inp',error)
+
+  if not os.path.exists(run_path + 'error'):
+    os.makedirs(run_path + 'error')
+
+  run_case.write_file(run_path + 'error/error.inp',error)
+
+#####################################################
+# Write rimls input file if defined
+#####################################################
+
+try:
+  rimls
+except NameError:
+  pass
+else:
+  print "writing rimls input file"
+
+  if not os.path.exists(run_path + 'rimls'):
+    os.makedirs(run_path + 'rimls')
+
+  run_case.write_file(run_path + 'rimls/rimls.inp',rimls)
+
+
+
+
 
 if write_only == True:
   raise SystemExit(0)
