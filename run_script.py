@@ -10,6 +10,7 @@ import run_check
 import subprocess
 import time
 import getpass
+import shutil
 
 try:
   opts,args = getopt.getopt(sys.argv[1:],"dw",["dry","write","chl","crc","tacc","no-prep","queue"])
@@ -139,6 +140,8 @@ else:
   if not os.path.exists(run_path + 'error'):
     os.makedirs(run_path + 'error')
 
+  shutil.copyfile(code_path + 'error', run_path + 'error/error')
+  shutil.copyfile(code_path + 'error_run.py', run_path + 'error/error_run.py')
   run_case.write_file(run_path + 'error/error.inp',error)
 
 #####################################################
@@ -155,7 +158,10 @@ else:
   if not os.path.exists(run_path + 'rimls'):
     os.makedirs(run_path + 'rimls')
 
+  shutil.copyfile(code_path + 'rimls', run_path + 'rimls/rimls')
+  shutil.copyfile(code_path + 'rimls_run.py', run_path + 'rimls/rimls_run.py')
   run_case.write_file(run_path + 'rimls/rimls.inp',rimls)
+
 
 
 
@@ -170,6 +176,7 @@ if write_only == True:
 #####################################################
 
 bundle_values = bundle.values()
+#bundle_values.sort(key=lambda x: int(x.cores), reverse=False)
 bundle_values.sort(key=lambda x: int(x.cores), reverse=True)
 
 ncases = len(bundle_values)

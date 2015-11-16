@@ -260,9 +260,9 @@ output_direc = './'
 num_partitions = '1'
 
 # Run, grid, and executable paths
-run_path = '/home2/sbrus/dgswe_converge_curve_rimls6/'
-code_path = '/home2/sbrus/dgswe_converge_curve_rimls6/code/'
-grid_path = '/home2/sbrus/dgswe_converge_curve_rimls6/grids/'
+run_path = '/home2/sbrus/dgswe_converge_curve_rimls9/'
+code_path = '/home2/sbrus/dgswe_converge_curve_rimls9/code/'
+grid_path = '/home2/sbrus/dgswe_converge_curve_rimls9/grids/'
 
 # set up cases list
 cases = []
@@ -349,7 +349,7 @@ for i,p in enumerate(p_orders):
   for k,grid in enumerate(grid_names):
     dt = timesteps[k][i]
 
-    rimls.append({'value':'!'+grid_path+'converge2_bath_dble.grd' , 'comment':'! base grid - used to determine the rimls surface               \n'})
+    rimls.append({'value':'!'+grid_path+'converge4_bath_dble.grd' , 'comment':'! base grid - used to determine the rimls surface               \n'})
     rimls.append({'value':'!'+grid_path+grid+'.grd'               , 'comment':'! eval grid - used to determine rimls surface evaluation points \n'})
     rimls.append({'value':'!'+p                                   , 'comment':'! ctp - parametric coordinate transformation order              \n'})
     rimls.append({'value':'!'+'1d0'                               , 'comment':'! Erad - radius of Earth                                        \n'})
