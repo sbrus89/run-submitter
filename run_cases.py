@@ -230,8 +230,8 @@ max_proc = 500
 
 allocation = 'TG-DMS080016N'
 
-run_queue = 'zas'
-prep_queue = 'zas'
+run_queue = 'athos'
+prep_queue = 'athos'
 
 
 exe_name = 'dgswe_mpi'
@@ -260,9 +260,9 @@ output_direc = './'
 num_partitions = '1'
 
 # Run, grid, and executable paths
-run_path = '/home2/sbrus/dgswe_converge_curve_rimls9/'
-code_path = '/home2/sbrus/dgswe_converge_curve_rimls9/code/'
-grid_path = '/home2/sbrus/dgswe_converge_curve_rimls9/grids/'
+run_path = '/home2/sbrus/dgswe_converge_curve_rimls10/'
+code_path = '/home2/sbrus/dgswe_converge_curve_rimls10/code/'
+grid_path = '/home2/sbrus/dgswe_converge_curve_rimls10/grids/'
 
 # set up cases list
 cases = []
@@ -343,7 +343,7 @@ for i,p in enumerate(p_orders):
 
 # Set up rimls imput file
 rimls = []
-r = '1.5d0'
+r = '4d0'
 sigma_n = '1.5d0'
 for i,p in enumerate(p_orders):
   for k,grid in enumerate(grid_names):

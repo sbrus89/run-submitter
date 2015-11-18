@@ -140,8 +140,8 @@ else:
   if not os.path.exists(run_path + 'error'):
     os.makedirs(run_path + 'error')
 
-  shutil.copyfile(code_path + 'error', run_path + 'error/error')
-  shutil.copyfile(code_path + 'error_run.py', run_path + 'error/error_run.py')
+  shutil.copy(code_path + 'error', run_path + 'error/error')
+  shutil.copy(code_path + 'error_run.py', run_path + 'error/error_run.py')
   run_case.write_file(run_path + 'error/error.inp',error)
 
 #####################################################
@@ -158,8 +158,8 @@ else:
   if not os.path.exists(run_path + 'rimls'):
     os.makedirs(run_path + 'rimls')
 
-  shutil.copyfile(code_path + 'rimls', run_path + 'rimls/rimls')
-  shutil.copyfile(code_path + 'rimls_run.py', run_path + 'rimls/rimls_run.py')
+  shutil.copy(code_path + 'rimls', run_path + 'rimls/rimls')
+  shutil.copy(code_path + 'rimls_run.py', run_path + 'rimls/rimls_run.py')
   run_case.write_file(run_path + 'rimls/rimls.inp',rimls)
 
 
