@@ -172,12 +172,18 @@ class TACCRun(Run):
     
     if self.run_header == False:
       self.run_content = self.sub_header(job_name,case['rqueue'],case['rtime'],self.cores,case['alloc'])
+
       self.run_header = True
-    self.run_content.append({'value':'cd '+case['direc']                                        , 'comment':'\n'})
-    self.run_content.append({'value':self.exe_cmd + ' -np '+ case['proc'] + ' ./' + exe_name    , 'comment':'\n'})
-    self.run_content.append({'value':'./'+post_name                                             , 'comment':'\n'})
+    self.run_content.append({'value':'cd '+case['direc']                                          , 'comment':'\n'})
+
+    if self.cores > 1:
+      self.run_content.append({'value':self.exe_cmd + ' -np '+ case['proc'] + ' ./' + exe_name    , 'comment':'\n'})
+      self.run_content.append({'value':'./'+post_name                                             , 'comment':'\n'})
+    else:
+      self.run_content.append({'value':' ./' + exe_name                                           , 'comment':'\n'})
+      
     #self.run_content.append({'value':'echo "' + job_name + ' Complete" | mail -s "' + job_name +' Complete" sbrus@nd.edu', 'comment':'\n'})
-    self.run_content.append({'value':''                                                         , 'comment':'\n'})   
+    self.run_content.append({'value':''                                                           , 'comment':'\n'})   
     
     self.run_name = case['rdirec']+'run_np'+self.cores+'.sub'
     self.run_direc = case['rdirec']

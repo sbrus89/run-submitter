@@ -237,7 +237,7 @@ else:
   for run_case in bundle_values:  
 
     print run_case.cores
-    if prep:
+    if prep and run_case.cores > 1:
       run_case.submit_prep()  
     run_case.submit_run()  
 
