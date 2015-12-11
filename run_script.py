@@ -162,6 +162,25 @@ else:
   shutil.copy(code_path + 'rimls_run.py', run_path + 'rimls/rimls_run.py')
   run_case.write_file(run_path + 'rimls/rimls.inp',rimls)
 
+#####################################################
+# Write bathy input file if defined
+#####################################################
+
+try:
+  bathy
+except NameError:
+  pass
+else:
+  print "writing bathy input file"
+
+  if not os.path.exists(run_path + 'bathy'):
+    os.makedirs(run_path + 'bathy')
+
+  shutil.copy(code_path + 'bathy', run_path + 'bathy/bathy')
+  shutil.copy(code_path + 'bathy_run.py', run_path + 'bathy/bathy_run.py')
+  run_case.write_file(run_path + 'bathy/bathy.inp',bathy)
+
+
 
 
 
@@ -176,8 +195,8 @@ if write_only == True:
 #####################################################
 
 bundle_values = bundle.values()
-#bundle_values.sort(key=lambda x: int(x.cores), reverse=False)
-bundle_values.sort(key=lambda x: int(x.cores), reverse=True)
+bundle_values.sort(key=lambda x: int(x.cores), reverse=False)
+#bundle_values.sort(key=lambda x: int(x.cores), reverse=True)
 
 ncases = len(bundle_values)
 nsub = 0

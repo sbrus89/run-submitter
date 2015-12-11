@@ -333,8 +333,8 @@ class CRCRun(TACCRun):
       info['max_cores'] = 24
       info['mpi_module'] = 'mvapich2/1.9-intel'
     elif queue == 'aegaeon':
-      info['queue_name'] = '*@@westerink_d12chas'
-     #info['queue_name'] = '*@@d12chaswell'
+     #info['queue_name'] = '*@@westerink_d12chas'
+      info['queue_name'] = '*@@d12chaswell'
       info['node_name'] = 'd12chas'
       info['node_size'] = '24'
       info['node_limit'] = (20,81)
