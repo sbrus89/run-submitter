@@ -343,6 +343,7 @@ for i,p in enumerate(p_orders):
 
 # Set up rimls imput file
 rimls = []
+lsp = '4'
 r = '4d0'
 sigma_n = '1.5d0'
 for i,p in enumerate(p_orders):
@@ -352,6 +353,7 @@ for i,p in enumerate(p_orders):
     rimls.append({'value':'!'+grid_path+'converge4_bath_dble.grd' , 'comment':'! base grid - used to determine the rimls surface               \n'})
     rimls.append({'value':'!'+grid_path+grid+'.grd'               , 'comment':'! eval grid - used to determine rimls surface evaluation points \n'})
     rimls.append({'value':'!'+p                                   , 'comment':'! ctp - parametric coordinate transformation order              \n'})
+    rimls.append({'value':'!'+lsp                                 , 'comment':'! lsp - moving least squares polynomial fit order               \n'})
     rimls.append({'value':'!'+'1d0'                               , 'comment':'! Erad - radius of Earth                                        \n'})
     rimls.append({'value':'!'+'0d0,0d0'                           , 'comment':'! lambda0,phi0 - center of CPP coordinate system                \n'})
     rimls.append({'value':'!'+r                                   , 'comment':'! r - muliplier for search radius (1.5 - 4.0)                   \n'})
