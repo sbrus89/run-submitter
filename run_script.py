@@ -116,12 +116,13 @@ for case in cases:
     
     
   run_case.input_file(case) # Create and write input file
-  run_case.prep_file(case)  # Create/build prep file 
+  if int(case['proc']) > 1:
+    run_case.prep_file(case)  # Create/build prep file 
   run_case.run_file(case)   # Create/build run file
   
 for run_case in bundle.itervalues():
-  
-  run_case.write_file(run_case.prep_name,run_case.prep_content)  
+  if int(run_case.cores) > 1:
+    run_case.write_file(run_case.prep_name,run_case.prep_content)  
   run_case.write_file(run_case.run_name, run_case.run_content)
                  
   

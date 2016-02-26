@@ -44,20 +44,24 @@ class Run(object):
 #                    {'value':case['npart']        ,  'comment':'! npart - edge blocking parameter \n'},
 #                    {'value':case['npart']        ,  'comment':'! npart - edge blocking parameter \n'}]
                     
-    self.inp_content = [{'value':"grid_file = "+case['mesh']+'.grd' ,  'comment':'! grid file \n'},
-                    {'value':"forcing_file = "+case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'},
-                    {'value':"bathy_file = "+case['bathy']          ,  'comment':'! high order bathymetry file \n'},                    
-                    {'value':"p = "+case['p']                       ,  'comment':'! p - polynomial order \n'},
-                    {'value':"ctp = "+case['ctp']                   ,  'comment':'! ctp - parametric coordinate transformation order \n'},
-                    {'value':"hbp = "+case['hbp']                   ,  'comment':'! hbp - bathymetry order \n'},
-                    {'value':"rk = "+case['rk']                     ,  'comment':'! RK timestepping scheme \n'},                    
-                    {'value':"dt = "+case['dt']                     ,  'comment':'! dt - timestep (seconds) \n'},
-                    {'value':"tf = "+case['tf']                     ,  'comment':'! tf - final time (days) \n'},
-                    {'value':"dramp = "+case['dramp']               ,  'comment':'! dramp - ramping parameter (days) \n'},
-                    {'value':"cf = "+case['cf']                     ,  'comment':'! cf - friction coefficient \n'},
-                    {'value':"lines = "+case['nlines']              ,  'comment':'! lines - lines in output files \n'},
-                    {'value':"out_direc = "+case['outdir']          ,  'comment':'! output directory \n'},
-                    {'value':"npart = "+case['npart']               ,  'comment':'! npart - edge blocking parameter \n'}]                    
+    self.inp_content = []
+    self.inp_content.append({'value':"grid_file = "+case['mesh']+'.grd'     ,  'comment':'! grid file \n'})
+    self.inp_content.append({'value':"forcing_file = "+case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'})
+    if 'bathy' in case:
+      self.inp_content.append({'value':"bathy_file = "+case['bathy']        ,  'comment':'! high order bathymetry file \n'})
+    if 'curve' in case:
+      self.inp_content.append({'value':"curve_file = "+case['curve']        ,  'comment':'! curved boundary file \n'})
+    self.inp_content.append({'value':"p = "+case['p']                       ,  'comment':'! p - polynomial order \n'})
+    self.inp_content.append({'value':"ctp = "+case['ctp']                   ,  'comment':'! ctp - parametric coordinate transformation order \n'})
+    self.inp_content.append({'value':"hbp = "+case['hbp']                   ,  'comment':'! hbp - bathymetry order \n'})
+    self.inp_content.append({'value':"rk = "+case['rk']                     ,  'comment':'! RK timestepping scheme \n'})                   
+    self.inp_content.append({'value':"dt = "+case['dt']                     ,  'comment':'! dt - timestep (seconds) \n'})
+    self.inp_content.append({'value':"tf = "+case['tf']                     ,  'comment':'! tf - final time (days) \n'})
+    self.inp_content.append({'value':"dramp = "+case['dramp']               ,  'comment':'! dramp - ramping parameter (days) \n'})
+    self.inp_content.append({'value':"cf = "+case['cf']                     ,  'comment':'! cf - friction coefficient \n'})
+    self.inp_content.append({'value':"lines = "+case['nlines']              ,  'comment':'! lines - lines in output files \n'})
+    self.inp_content.append({'value':"out_direc = "+case['outdir']          ,  'comment':'! output directory \n'})
+    self.inp_content.append({'value':"npart = "+case['npart']               ,  'comment':'! npart - edge blocking parameter \n'})
                     
     self.inp_name = case['input']
     
@@ -176,11 +180,11 @@ class TACCRun(Run):
       self.run_header = True
     self.run_content.append({'value':'cd '+case['direc']                                          , 'comment':'\n'})
 
-    if self.cores > 1:
+    if int(self.cores) > 1:
       self.run_content.append({'value':self.exe_cmd + ' -np '+ case['proc'] + ' ./' + exe_name    , 'comment':'\n'})
       self.run_content.append({'value':'./'+post_name                                             , 'comment':'\n'})
     else:
-      self.run_content.append({'value':' ./' + exe_name                                           , 'comment':'\n'})
+      self.run_content.append({'value':'./' + exe_name                                            , 'comment':'\n'})
       
     #self.run_content.append({'value':'echo "' + job_name + ' Complete" | mail -s "' + job_name +' Complete" sbrus@nd.edu', 'comment':'\n'})
     self.run_content.append({'value':''                                                           , 'comment':'\n'})   
@@ -188,7 +192,8 @@ class TACCRun(Run):
     self.run_name = case['rdirec']+'run_np'+self.cores+'.sub'
     self.run_direc = case['rdirec']
     
-    shutil.copy(case['post'], case['direc'])
+    if int(self.cores) > 1:
+      shutil.copy(case['post'], case['direc'])
     
     
     
@@ -263,6 +268,8 @@ class TACCRun(Run):
 class CRCRun(TACCRun):
   
   def sub_header(self,job_name,queue,time,cores,alloc):
+
+    import math
     
     ncores = int(cores)
 
@@ -274,9 +281,11 @@ class CRCRun(TACCRun):
     node_limit = info['node_limit']
     max_cores = info['max_cores']
     mpi_module = info['mpi_module']
+    
+    req_cores = int(math.ceil(float(cores)/float(node_size))*float(node_size))
 
     if ncores > 1:  
-      if ncores % int(node_size) != 0:
+      if int(req_cores) % int(node_size) != 0:
         print "  Number of cores must be a multiple of " + node_size
         raise SystemExit(0)
       if ncores > max_cores:
@@ -289,9 +298,10 @@ class CRCRun(TACCRun):
                     {'value':'#$ -M sbrus@nd.edu'      , 'comment':'\n'},
                     {'value':'#$ -m abe'               , 'comment':'# email me when the job aborts/begins/ends \n' }]
     if ncores > 1:
-      content.append({'value':'#$ -pe mpi-' + node_size + ' ' + cores, 'comment':'\n\n'})
+      content.append({'value':'#$ -pe mpi-' + node_size + ' ' + str(req_cores), 'comment':'\n\n'})
       content.append({'value':'module load ' + mpi_module             , 'comment':'\n'})
-#      content.append({'value':'module load netcdf'                    , 'comment':'\n\n'})      
+#      content.append({'value':'module load netcdf'                    , 'comment':'\n'})      
+      content.append({'value':''                                      , 'comment':'\n'})
     else:
       content.append({'value':''                                      , 'comment':'\n'})
       content.append({'value':'module load intel/15.0'                , 'comment':'\n\n'})
@@ -317,21 +327,21 @@ class CRCRun(TACCRun):
       info['node_size'] = '8'
       info['node_limit'] = (1,64)
       info['max_cores'] = 512
-      info['mpi_module'] = 'mvapich2/1.9-intel'
+      info['mpi_module'] = 'mvapich2/2.1-intel-15.0-qlc'
     elif queue == 'athos':
       info['queue_name'] = '*@@westerink_d6cneh'
       info['node_name'] = 'd6cneh'
       info['node_size'] = '12'
       info['node_limit'] = (1,83)
       info['max_cores'] = 996
-      info['mpi_module'] = 'mvapich2/1.9-intel'
+      info['mpi_module'] = 'mvapich2/2.1-intel-15.0-qlc'
     elif queue == 'proteus':
       info['queue_name'] = '*@@westerink_graphics'
       info['node_name'] = 'proteus'
       info['node_size'] = '12'
       info['node_limit'] = (1,2)
       info['max_cores'] = 24
-      info['mpi_module'] = 'mvapich2/1.9-intel'
+      info['mpi_module'] = 'mvapich2/2.1-intel-15.0-qlc'
     elif queue == 'aegaeon':
      #info['queue_name'] = '*@@westerink_d12chas'
       info['queue_name'] = '*@@d12chaswell'
