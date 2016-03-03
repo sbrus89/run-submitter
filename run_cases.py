@@ -363,6 +363,161 @@ for i,p in enumerate(p_orders):
 
 
 
+
+
+
+
+
+
+
+
+
+#####################################################################
+### Converging channel parallel consistency check
+#####################################################################
+
+## run variables
+
+#input_name = 'dgswe.inp'
+
+#bundle_flag = False          # bundle runs with same number of processors into same submission script
+                             # 'rdirec' needs to be the same for each bundle of runs
+#processors = ['1','2','4','8']
+#prep_time = '00:20:00'
+#run_time = ['06:00:00','06:00:00','06:00:00','06:00:00']
+#max_proc = 500
+
+#allocation = 'TG-DMS080016N'
+
+#run_queue = 'proteus'
+#prep_queue = 'proteus'
+
+#serial_exe = 'dgswe'
+#mpi_exe = 'dgswe_mpi'
+#prep_name = 'dgprep'
+#post_name = 'dgpost'
+
+#grid_names = ['converge1_dble']
+#p_orders = ['1','2','3']
+#ctp_orders = ['2','2','3']
+#hbp_orders = ['1','2','3']
+#rk_types = ['22','33','45']
+#timesteps = [['.5d0'   ,'.25d0'   ,'.125d0'],
+#             ['.25d0'  ,'.125d0'  ,'.0625d0'],
+#             ['.125d0' ,'.0625d0' ,'.03125d0'],
+#             ['.0625d0','.03125d0','.015625d0']]
+##timesteps = ['.5d0','.25d0','.125d0']
+##timesteps = ['.25d0','.125d0','.0625d0']
+##timesteps = ['.125d0','.0625d0','.03125d0']
+##timesteps = ['.0625d0','.03125d0','.015625d0']
+
+#final_time = '1d0'
+#ramp_length = '.08d0'
+#fric_coef = '.0025d0'
+#num_snaps = '10d0'
+#output_direc = './'
+#num_partitions = '1'
+
+## Run, grid, and executable paths
+#run_path = '/home2/sbrus/serial_mpi/converge/fb2f7b_test/'
+#code_path = '/home2/sbrus/serial_mpi/converge/fb2f7b_test/code/'
+#grid_path = '/home2/sbrus/serial_mpi/converge/grids/'
+
+## set up cases list
+#cases = []
+#for j,procs in enumerate(processors):
+
+#  if procs == '1':
+#    exe_name = serial_exe
+#  else:
+#    exe_name = mpi_exe
+
+#  for k,grid in enumerate(grid_names):
+#    for i,p in enumerate(p_orders):
+#      ctp = ctp_orders[i]
+#      dt = timesteps[k][i]
+#      rk = rk_types[i]
+#      rtime = run_time[i]
+#      hbp = hbp_orders[i]
+#      directory_name = run_path + grid+'/' + 'p'+p+'/' + 'ctp'+ctp+'/' + 'hbp'+hbp+'/' + 'np'+procs+'/'
+#      cases.append({'input':directory_name+input_name,
+#                    'mesh':grid_path+grid,
+#                    'bathy':grid_path+grid+'_hbp'+hbp+'.hb',
+#                    'curve':grid_path+grid+'_ctp'+ctp+'.cb',
+
+#                    'p':p,
+#                    'ctp':ctp,
+#                    'hbp':hbp,
+
+#                    'rk':rk,
+#                    'dt':dt,
+#                    'tf':final_time,
+#                    'dramp':ramp_length,
+ 
+#                    'cf':fric_coef,
+
+#                    'nlines':num_snaps,
+#                    'outdir':output_direc,
+
+#                    'npart':num_partitions,
+
+#                    'direc':directory_name,
+#                    #'rdirec':run_path,
+#                    'rdirec':directory_name,
+#                    'proc':procs,
+#                    'exe':code_path+exe_name,
+#                    'rtime':rtime,
+#                    'rqueue':run_queue.lower(),
+
+#                    'prep':code_path+prep_name,
+#                    'ptime':prep_time,
+#                    'pqueue':prep_queue.lower(),
+#                    'alloc':allocation,
+#                    'post':code_path+post_name})
+
+## Set up error input file
+#error = []
+#for k,grid in enumerate(grid_names):
+#  for i,p in enumerate(p_orders):
+
+#    dt = timesteps[k][i]
+#    ctp = ctp_orders[i]
+#    hbp = hbp_orders[i]
+
+#    for j,procs in enumerate(processors[1:]):
+
+#      serial_sol_direc   = run_path + grid+'/' + 'p'+p+'/' + 'ctp'+ctp+'/' + 'hbp'+hbp+'/' + 'np'+processors[0]+'/'
+#      parallel_sol_direc = run_path + grid+'/' + 'p'+p+'/' + 'ctp'+ctp+'/' + 'hbp'+hbp+'/' + 'np'+procs+'/'
+
+#      error.append({'value':'!'+grid_path+grid+'.grd'          , 'comment':'! coarse grid file                                       \n'})
+#      error.append({'value':'!'+serial_sol_direc               , 'comment':'! coarse output directory                                \n'})
+#      error.append({'value':'!'+p                              , 'comment':'! p - coarse polynomial order                            \n'})
+#      error.append({'value':'!'+ctp                            , 'comment':'! ctp - coarse parametric coordinate transformation order\n'})
+#      error.append({'value':'!'+dt                             , 'comment':'! dt - coarse timestep                                   \n'})
+#      error.append({'value':'!'+grid_path+grid+'.grd'          , 'comment':'! fine grid file                                         \n'})
+#      error.append({'value':'!'+parallel_sol_direc             , 'comment':'! fine output directory                                  \n'})
+#      error.append({'value':'!'+p                              , 'comment':'! p - fine polynomial order                              \n'})
+#      error.append({'value':'!'+ctp                            , 'comment':'! ctp - fine parametric coordinate transformation order  \n'})
+#      error.append({'value':'!'+dt                             , 'comment':'! dt - fine timestep                                     \n'})
+#      error.append({'value':'!'+final_time                     , 'comment':'! tf - final time (days)                                 \n'})
+#      error.append({'value':'!'+num_snaps                      , 'comment':'! lines - lines in output file                           \n'})
+#      error.append({'value':'!'+grid_path+grid+'.grd'          , 'comment':'! coarsest grid file                                     \n'})
+#      error.append({'value':'!'+ctp                            , 'comment':'! coarsest grid ctp                                      \n'})
+#      error.append({'value':''                                 , 'comment':'                                                         \n'})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     
                     
 #for k,grid in enumerate(grid_names):
@@ -375,6 +530,8 @@ for i,p in enumerate(p_orders):
 #    directory_name = run_path + grid+'/' + 'p'+p+'/' + 'ctp'+ctp+'/'
 #    cases.append({'input':directory_name+input_name,
 #                    'mesh':grid_path+grid ,
+#                    'bathy':grid_path+grid+'_hbp'+hbp+'.hb',
+#                    'curve':grid_path+grid+'_ctp'+ctp+'.cb',
 #
 #                    'p':p,
 #                    'ctp':ctp,
