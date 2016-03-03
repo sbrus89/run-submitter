@@ -130,7 +130,21 @@ class Run(object):
       l = output.stdout.readline()
       print l.rstrip('\n')
     print output.stdout.read()
+
+
   
+
+  def setup_extra_inputs(self,cases,code_name,run_path,code_path):
+
+    print "writing " + code_name + " input file"
+
+    if not os.path.exists(run_path + code_name):
+      os.makedirs(run_path + code_name)
+
+    shutil.copy(code_path + code_name, run_path + code_name+"/"+code_name)
+    shutil.copy(code_path + code_name+"_run.py", run_path + code_name+"/"+code_name+"_run.py")
+    self.write_file(run_path + code_name+"/"+code_name+".inp", cases)
+
 
     
 

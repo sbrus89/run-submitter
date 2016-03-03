@@ -127,62 +127,51 @@ for run_case in bundle.itervalues():
                  
   
 
-#####################################################
-# Write error input file if defined
-#####################################################
+
+######################################################
+## Write error input file if defined
+######################################################
 
 try:
   error
 except NameError:
   pass
 else:
-  print "writing error input file"
+  run_case.setup_extra_inputs(error,"error",run_path,code_path)
 
-  if not os.path.exists(run_path + 'error'):
-    os.makedirs(run_path + 'error')
-
-  shutil.copy(code_path + 'error', run_path + 'error/error')
-  shutil.copy(code_path + 'error_run.py', run_path + 'error/error_run.py')
-  run_case.write_file(run_path + 'error/error.inp',error)
-
-#####################################################
-# Write rimls input file if defined
-#####################################################
+######################################################
+## Write rimls input file if defined
+######################################################
 
 try:
   rimls
 except NameError:
   pass
 else:
-  print "writing rimls input file"
+ run_case.setup_extra_inputs(rimls,"rimls",run_path,code_path)
 
-  if not os.path.exists(run_path + 'rimls'):
-    os.makedirs(run_path + 'rimls')
+######################################################
+## Write bathy input file if defined
+######################################################
 
-  shutil.copy(code_path + 'rimls', run_path + 'rimls/rimls')
-  shutil.copy(code_path + 'rimls_run.py', run_path + 'rimls/rimls_run.py')
-  run_case.write_file(run_path + 'rimls/rimls.inp',rimls)
-
-#####################################################
-# Write bathy input file if defined
-#####################################################
 
 try:
   bathy
 except NameError:
   pass
 else:
-  print "writing bathy input file"
+  run_case.setup_extra_inputs(bathy,"bathy",run_path,code_path)
 
-  if not os.path.exists(run_path + 'bathy'):
-    os.makedirs(run_path + 'bathy')
+######################################################
+## Write spline input file if defined
+######################################################
 
-  shutil.copy(code_path + 'bathy', run_path + 'bathy/bathy')
-  shutil.copy(code_path + 'bathy_run.py', run_path + 'bathy/bathy_run.py')
-  run_case.write_file(run_path + 'bathy/bathy.inp',bathy)
-
-
-
+try:
+  curve
+except NameError:
+  pass
+else:
+  run_case.setup_extra_inputs(curve,"spline",run_path,code_path)
 
 
 
