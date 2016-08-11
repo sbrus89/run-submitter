@@ -44,24 +44,47 @@ class Run(object):
 #                    {'value':case['npart']        ,  'comment':'! npart - edge blocking parameter \n'},
 #                    {'value':case['npart']        ,  'comment':'! npart - edge blocking parameter \n'}]
                     
+    inputs = [['grid_file'    , True , '! grid file                                        \n'],
+              ['forcing_file' , True , '! forcing file                                     \n'],
+              ['bathy_file'   , False, '! high order bathymetry file                       \n'],
+              ['curve_file'   , False, '! curved boundary file                             \n'],
+              ['p'            , True , '! p - polynomial order                             \n'],
+              ['ctp'          , False, '! ctp - parametric coordinate transformation order \n'],
+              ['hbp'          , False, '! hbp - bathymetry order                           \n'],
+              ['rk'           , False, '! RK timestepping scheme                           \n'],
+              ['dt'           , True , '! dt - timestep (seconds)                          \n'],
+              ['tf'           , True , '! tf - final time (days)                           \n'],
+              ['dramp'        , True , '! dramp - ramping coefficient                      \n'],
+              ['cf'           , True , '! cf - friction coefficient                        \n'],
+              ['out_direc'    , False, '! out_direc - output directory                     \n'],
+              ['npart'        , False, '! npart - edge blocking parameter                  \n'],
+              ['h0'           , False, '! h0- minimum depth                                \n'],
+              ['coord_sys'    , False, '! coord_sys - coordinate system option             \n'],
+              ['slam0'        , False, '! slam0 - center of CPP projection                 \n'],
+              ['sphi0'        , False, '! sphi0 - center of CPP projection                 \n'], 
+              ['sol_opt'      , False, '! sol_opt - solution output option                 \n'],
+              ['sol_snap'     , False, '! sol_snap - solution output interval              \n'],
+              ['sta_opt'      , False, '! sta_opt - station output option                  \n'],
+              ['sta_snap'     , False, '! sta_snap - station output interval               \n'], 
+              ['sta_file'     , False, '! sta_file - station location file                 \n']]
+              
+
     self.inp_content = []
-    self.inp_content.append({'value':"grid_file = "+case['mesh']+'.grd'     ,  'comment':'! grid file \n'})
-    self.inp_content.append({'value':"forcing_file = "+case['mesh']+'.bfr'  ,  'comment':'! forcing file \n'})
-    if 'bathy' in case:
-      self.inp_content.append({'value':"bathy_file = "+case['bathy']        ,  'comment':'! high order bathymetry file \n'})
-    if 'curve' in case:
-      self.inp_content.append({'value':"curve_file = "+case['curve']        ,  'comment':'! curved boundary file \n'})
-    self.inp_content.append({'value':"p = "+case['p']                       ,  'comment':'! p - polynomial order \n'})
-    self.inp_content.append({'value':"ctp = "+case['ctp']                   ,  'comment':'! ctp - parametric coordinate transformation order \n'})
-    self.inp_content.append({'value':"hbp = "+case['hbp']                   ,  'comment':'! hbp - bathymetry order \n'})
-    self.inp_content.append({'value':"rk = "+case['rk']                     ,  'comment':'! RK timestepping scheme \n'})                   
-    self.inp_content.append({'value':"dt = "+case['dt']                     ,  'comment':'! dt - timestep (seconds) \n'})
-    self.inp_content.append({'value':"tf = "+case['tf']                     ,  'comment':'! tf - final time (days) \n'})
-    self.inp_content.append({'value':"dramp = "+case['dramp']               ,  'comment':'! dramp - ramping parameter (days) \n'})
-    self.inp_content.append({'value':"cf = "+case['cf']                     ,  'comment':'! cf - friction coefficient \n'})
-    self.inp_content.append({'value':"lines = "+case['nlines']              ,  'comment':'! lines - lines in output files \n'})
-    self.inp_content.append({'value':"out_direc = "+case['outdir']          ,  'comment':'! output directory \n'})
-    self.inp_content.append({'value':"npart = "+case['npart']               ,  'comment':'! npart - edge blocking parameter \n'})
+    for input in inputs: 
+      option = input[0]
+      required = input[1]
+      comment = input[2]
+      if required:
+        if option in case:
+          self.inp_content.append({'value':option+" = "+case[option],  'comment':comment})
+        else:
+          print "Required option missing for input file"
+          raise SystemExit(0)
+      else:
+        if option in case:
+          self.inp_content.append({'value':option+" = "+case[option],  'comment':comment})
+
+
                     
     self.inp_name = case['input']
     
@@ -357,8 +380,11 @@ class CRCRun(TACCRun):
       info['max_cores'] = 24
       info['mpi_module'] = 'mvapich2/2.1-intel-15.0-qlc'
     elif queue == 'aegaeon':
-     #info['queue_name'] = '*@@westerink_d12chas'
-      info['queue_name'] = '*@@d12chaswell'
+#      info['queue_name'] = '*@@westerink_d12chas'
+#      info['queue_name'] = '*@@westerink_d12chas_1992'
+#      info['queue_name'] = '*@@westerink_d12chas_1488'
+      info['queue_name'] = '*@@westerink_d12chas_504'
+     #info['queue_name'] = '*@@d12chaswell'
       info['node_name'] = 'd12chas'
       info['node_size'] = '24'
       info['node_limit'] = (20,81)
