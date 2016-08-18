@@ -15,8 +15,10 @@ class Run(object):
     
     self.prep_header = False
     self.run_header = False
+    self.post_header = False
     self.sub_prep = False
     self.sub_run = False
+    self.sub_post = False
     #self.inp_content = []
     #self.inp_name = ''
     #self.prep_content = []
@@ -113,6 +115,10 @@ class Run(object):
     self.run_content = []
     self.exe_name = case['exe'].split("/")[-1]
     self.run_direc = case['direc']
+
+  def post_file(self,case):
+    self.post_name = ''
+    self.post_content = []
     
 
                
@@ -219,7 +225,6 @@ class TACCRun(Run):
 
     if int(self.cores) > 1:
       self.run_content.append({'value':self.exe_cmd + ' -np '+ case['proc'] + ' ./' + exe_name    , 'comment':'\n'})
-      self.run_content.append({'value':'./'+post_name                                             , 'comment':'\n'})
     else:
       self.run_content.append({'value':'./' + exe_name                                            , 'comment':'\n'})
       
@@ -227,10 +232,28 @@ class TACCRun(Run):
     self.run_content.append({'value':''                                                           , 'comment':'\n'})   
     
     self.run_name = case['rdirec']+'run_np'+self.cores+'.sub'
-    self.run_direc = case['rdirec']
+    self.run_direc = case['rdirec']   
+
+
+  def post_file(self,case):
+
+    mesh_name = case['mesh'].split("/")[-1]
+    post_name = case['post'].split("/")[-1]
+    job_name = '_'.join([post_name,mesh_name,'p'+case['p'],'np'+case['proc']])
+    sub_cores = '1'
+    run_cores = case['proc']
+
+    if self.post_header == False:
+      self.post_content = self.sub_header(job_name,case['pqueue'],case['ptime'],sub_cores,case['alloc'])
+      self.post_header == True
+    self.post_content.append({'value':'cd '+case['direc']  , 'comment':'\n'})
+    self.post_content.append({'value':'./'+ post_name      , 'comment':'\n'})
+
+    self.post_name = case['rdirec']+'post_np'+run_cores+'.sub'
+    self.post_direc = case['rdirec']
+
+    shutil.copy(case['post'], case['direc'])
     
-    if int(self.cores) > 1:
-      shutil.copy(case['post'], case['direc'])
     
     
     
@@ -259,18 +282,17 @@ class TACCRun(Run):
     # submit the prep job
     prep_sub = self.prep_name
     prep_cmd = ["sbatch", prep_sub]
+    print prep_cmd
     output = subprocess.Popen(prep_cmd, stdout=subprocess.PIPE).communicate()[0]
-    output_sp = output.split()
+    print output
   
     # find the prep job id
+    output_sp = output.split()
     n = len(output_sp)
     self.job_id = output_sp[n-1]
     
     self.sub_prep = True
-    
-    print prep_cmd
-    print output  
-  
+      
     
     
   def submit_run(self):
@@ -286,15 +308,35 @@ class TACCRun(Run):
       run_cmd = ["sbatch", run_sub]
       
     print run_cmd
-    output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE)
-    
-    while output.poll() is None:
-      l = output.stdout.readline()
-      print l.rstrip('\n')
-    print output.stdout.read()    
-      
+    output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE).communicate()[0]
+    print output
+   
     self.sub_prep = False # not sure why this is needed
     self.sub_run = True
+
+
+    if self.cores > 1:
+      # find the run job id
+      output_sp = output.split()
+      n = len(output_sp)
+      self.job_id = output_sp[n-1]
+   
+      post_sub = self.post_name
+      post_cmd = ["sbatch", '--dependency=afterok:'+self.job_id, post_sub]
+      print post_cmd
+      output = subprocess.Popen(post_cmd, stdout=subprocess.PIPE).communicate()[0]
+      print output
+      
+      self.post_sub = True
+
+
+#    output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE)
+#    
+#    while output.poll() is None:
+#      l = output.stdout.readline()
+##      print l.rstrip('\n')
+#    print output.stdout.read()    
+      
   
     
 #####################################################################################################
@@ -332,7 +374,7 @@ class CRCRun(TACCRun):
     content = [{'value':'#!/bin/csh'              , 'comment':'\n\n'},
                     {'value':'#$ -N ' + job_name       , 'comment':'# job name\n'},
                     {'value':'#$ -q ' + queue_name     , 'comment':'# queue \n' },
-                    {'value':'#$ -M sbrus@nd.edu'      , 'comment':'\n'},
+                    {'value':'#$ -M sbrus@nd.edu'      , 'comment':'# email address \n'},
                     {'value':'#$ -m abe'               , 'comment':'# email me when the job aborts/begins/ends \n' }]
     if ncores > 1:
       content.append({'value':'#$ -pe mpi-' + node_size + ' ' + str(req_cores), 'comment':'\n\n'})
@@ -382,8 +424,8 @@ class CRCRun(TACCRun):
     elif queue == 'aegaeon':
 #      info['queue_name'] = '*@@westerink_d12chas'
 #      info['queue_name'] = '*@@westerink_d12chas_1992'
-#      info['queue_name'] = '*@@westerink_d12chas_1488'
-      info['queue_name'] = '*@@westerink_d12chas_504'
+      info['queue_name'] = '*@@westerink_d12chas_1488'
+#      info['queue_name'] = '*@@westerink_d12chas_504'
      #info['queue_name'] = '*@@d12chaswell'
       info['node_name'] = 'd12chas'
       info['node_size'] = '24'
@@ -404,18 +446,17 @@ class CRCRun(TACCRun):
     # submit the prep job
     prep_sub = self.prep_name
     prep_cmd = ["qsub", prep_sub]
+    print prep_cmd
     output = subprocess.Popen(prep_cmd, stdout=subprocess.PIPE).communicate()[0]
-    output_sp = output.split()
-    
+    print output    
+
     # find the prep job id
+    output_sp = output.split()
     n = len(output_sp)
     self.job_id = output_sp[2]
     
     self.sub_prep = True
     
-    print prep_cmd
-    print output  
-  
     
     
   def submit_run(self):
@@ -430,13 +471,27 @@ class CRCRun(TACCRun):
     else:
       run_cmd = ["qsub", run_sub]
 
+    print run_cmd
     output = subprocess.Popen(run_cmd, stdout=subprocess.PIPE).communicate()[0]
-      
+    print output
+
     self.sub_prep = False # not sure why this is needed
     self.sub_run = True
-  
-    print run_cmd
-    print output    
+
+    if int(self.cores) > 1:
+      # find the run job id
+      output_sp = output.split()
+      n = len(output_sp)
+      self.job_id = output_sp[2]
+
+      # submit the post job
+      post_sub = self.post_name
+      post_cmd = ["qsub", '-hold_jid '+self.job_id, post_sub]
+      print post_cmd
+      output = subprocess.Popen(post_cmd, stdout=subprocess.PIPE).communicate()[0]
+      print output
+      
+      self.sub_post = True
     
     
     

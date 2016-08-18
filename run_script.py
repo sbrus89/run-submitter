@@ -115,17 +115,24 @@ for case in cases:
     run_case = bundle[proc]
     
     
-  run_case.input_file(case) # Create and write input file
+  run_case.input_file(case)   # Create and write input file
+
   if int(case['proc']) > 1:
     run_case.prep_file(case)  # Create/build prep file 
-  run_case.run_file(case)   # Create/build run file
+
+  run_case.run_file(case)     # Create/build run file
+
+  if int(case['proc']) >1:    # Create/build post file
+    run_case.post_file(case)
   
 for run_case in bundle.itervalues():
   if int(run_case.cores) > 1:
     run_case.write_file(run_case.prep_name,run_case.prep_content)  
+
   run_case.write_file(run_case.run_name, run_case.run_content)
-                 
-  
+
+  if int(run_case.cores) > 1:                 
+    run_case.write_file(run_case.post_name, run_case.post_content)  
 
 
 ######################################################
@@ -245,8 +252,7 @@ else:
 
   for run_case in bundle_values:  
 
-    print run_case.cores
-    if prep and run_case.cores > 1:
+    if prep == True and int(run_case.cores) > 1:
       run_case.submit_prep()  
     run_case.submit_run()  
 
