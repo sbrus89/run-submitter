@@ -438,14 +438,17 @@ class CRCRun(TACCRun):
     
     
             
-  def submit_prep(self):
+  def submit_prep(self,hold=False):
     
     print self.prep_direc
     os.chdir(self.prep_direc)
 
     # submit the prep job
     prep_sub = self.prep_name
-    prep_cmd = ["qsub", prep_sub]
+    if not hold:
+      prep_cmd = ["qsub", prep_sub]
+    else:
+      prep_cmd = ["qsub", "-hold_jid "+hold, prep_sub]
     print prep_cmd
     output = subprocess.Popen(prep_cmd, stdout=subprocess.PIPE).communicate()[0]
     print output    

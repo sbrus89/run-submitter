@@ -13,7 +13,7 @@ import getpass
 import shutil
 
 try:
-  opts,args = getopt.getopt(sys.argv[1:],"dw",["dry","write","chl","crc","tacc","no-prep","queue"])
+  opts,args = getopt.getopt(sys.argv[1:],"dwh",["dry","write","hold","chl","crc","tacc","no-prep","queue"])
 except getopt.GetoptError:
   print "Incorrect command line arguments"
   raise SystemExit(0)
@@ -22,6 +22,7 @@ dry_run = False
 write_only = False
 prep = True
 queue = False
+hold_jid = False 
 
 hostname = socket.gethostname()
 hostname_sp = hostname.split(".")
@@ -37,6 +38,8 @@ for opt,arg in opts:
     dry_run = True
   elif opt in ["-w","--write"]:
     write_only = True
+  elif opt in ["-h","--hold"]:
+    hold_jid = arg
   elif opt == "--chl":
     host = "chl-tilos"
   elif opt == "--crc":
@@ -253,6 +256,6 @@ else:
   for run_case in bundle_values:  
 
     if prep == True and int(run_case.cores) > 1:
-      run_case.submit_prep()  
+      run_case.submit_prep(hold_jid)  
     run_case.submit_run()  
 
