@@ -424,7 +424,9 @@ class CRCRun(TACCRun):
     elif queue == 'aegaeon':
 #      info['queue_name'] = '*@@westerink_d12chas'
 #      info['queue_name'] = '*@@westerink_d12chas_1992'
-      info['queue_name'] = '*@@westerink_d12chas_1488'
+#      info['queue_name'] = '*@@westerink_d12chas_1488'
+#      info['queue_name'] = '*@@westerink_d12chas_984'      
+      info['queue_name'] = '*@@westerink_d12chas_1008'
 #      info['queue_name'] = '*@@westerink_d12chas_504'
      #info['queue_name'] = '*@@d12chaswell'
       info['node_name'] = 'd12chas'
@@ -448,7 +450,7 @@ class CRCRun(TACCRun):
     if not hold:
       prep_cmd = ["qsub", prep_sub]
     else:
-      prep_cmd = ["qsub", "-hold_jid "+hold, prep_sub]
+      prep_cmd = ["qsub", "-hold_jid "+hold, prep_sub] 
     print prep_cmd
     output = subprocess.Popen(prep_cmd, stdout=subprocess.PIPE).communicate()[0]
     print output    
