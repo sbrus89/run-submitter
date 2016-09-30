@@ -13,7 +13,7 @@ import getpass
 import shutil
 
 try:
-  opts,args = getopt.getopt(sys.argv[1:],"dwh",["dry","write","hold","chl","crc","tacc","no-prep","queue"])
+  opts,args = getopt.getopt(sys.argv[1:],"dwh:",["dry","write","hold=","chl","crc","tacc","no-prep","queue"])
 except getopt.GetoptError:
   print "Incorrect command line arguments"
   raise SystemExit(0)
@@ -52,7 +52,7 @@ for opt,arg in opts:
     queue = True
   
   
-
+#raise SystemExit(0)
 
 #############################################################
 # Set up cases
