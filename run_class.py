@@ -68,7 +68,8 @@ class Run(object):
               ['sol_snap'     , False, '! sol_snap - solution output interval              \n'],
               ['sta_opt'      , False, '! sta_opt - station output option                  \n'],
               ['sta_snap'     , False, '! sta_snap - station output interval               \n'], 
-              ['sta_file'     , False, '! sta_file - station location file                 \n']]
+              ['sta_file'     , False, '! sta_file - station location file                 \n'],
+              ['esl'          , False, '! esl - eddy viscosity parameter                   \n']]
               
 
     self.inp_content = []
