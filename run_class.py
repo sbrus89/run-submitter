@@ -424,17 +424,17 @@ class CRCRun(TACCRun):
       info['mpi_module'] = 'mvapich2/2.1-intel-15.0-qlc'
     elif queue == 'aegaeon':
 #      info['queue_name'] = '*@@westerink_d12chas'
-#      info['queue_name'] = '*@@westerink_d12chas_1992'
+      info['queue_name'] = '*@@westerink_d12chas_1992'
 #      info['queue_name'] = '*@@westerink_d12chas_1488'
 #      info['queue_name'] = '*@@westerink_d12chas_984'      
-      info['queue_name'] = '*@@westerink_d12chas_1008'
+#      info['queue_name'] = '*@@westerink_d12chas_1008'
 #      info['queue_name'] = '*@@westerink_d12chas_504'
      #info['queue_name'] = '*@@d12chaswell'
       info['node_name'] = 'd12chas'
       info['node_size'] = '24'
       info['node_limit'] = (20,81)
       info['max_cores']  = 1944
-      info['mpi_module'] = 'mvapich2/2.1-intel-15.0-mlx'
+      info['mpi_module'] = 'mvapich2/2.2-intel-16.0-mlx'
 
     return info
 
