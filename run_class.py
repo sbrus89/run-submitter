@@ -71,7 +71,9 @@ class Run(object):
               ['sta_opt'      , False, '! sta_opt - station output option                  \n'],
               ['sta_snap'     , False, '! sta_snap - station output interval               \n'], 
               ['sta_file'     , False, '! sta_file - station location file                 \n'],
-              ['esl'          , False, '! esl - eddy viscosity parameter                   \n']]
+              ['esl'          , False, '! esl - eddy viscosity parameter                   \n'],
+              ['str_tol'      , False, '! str_tol - curved edge -> straight edge tolerance \n'],
+              ['cb_wmult'     , False, '! curved element domain decomp weight parameter    \n']]
               
     
     exe_name = case['exe'].split("/")[-1]      
