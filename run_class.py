@@ -45,6 +45,8 @@ class Run(object):
 #                    {'value':case['nlines']       ,  'comment':'! lines - lines in output files \n'},
 #                    {'value':case['npart']        ,  'comment':'! npart - edge blocking parameter \n'},
 #                    {'value':case['npart']        ,  'comment':'! npart - edge blocking parameter \n'}]
+
+    shutil.copy(case['exe'], case['direc'])
                     
     inputs = [['grid_file'    , True , '! grid file                                        \n'],
               ['forcing_file' , True , '! forcing file                                     \n'],
@@ -71,29 +73,36 @@ class Run(object):
               ['sta_file'     , False, '! sta_file - station location file                 \n'],
               ['esl'          , False, '! esl - eddy viscosity parameter                   \n']]
               
-
-    self.inp_content = []
-    for input in inputs: 
-      option = input[0]
-      required = input[1]
-      comment = input[2]
-      if required:
-        if option in case:
-          self.inp_content.append({'value':option+" = "+case[option],  'comment':comment})
+    
+    exe_name = case['exe'].split("/")[-1]      
+    
+    if exe_name == 'padcirc' or exe_name == 'adcirc':
+    
+      subprocess.Popen('ln -s '+grid_file+' '+case['rdirec']+fort.14, stdout=subprocess.PIPE)    
+      subprocess.Popen('ln -s '+forcing_file+' '+case['rdirec']+fort.15, stdout=subprocess.PIPE)
+    
+    else:
+    
+      self.inp_content = []
+      for input in inputs: 
+        option = input[0]
+        required = input[1]
+        comment = input[2]
+        if required:
+          if option in case:
+            self.inp_content.append({'value':option+" = "+case[option],  'comment':comment})
+          else:
+            print "Required option missing for input file"
+            raise SystemExit(0)
         else:
-          print "Required option missing for input file"
-          raise SystemExit(0)
-      else:
-        if option in case:
-          self.inp_content.append({'value':option+" = "+case[option],  'comment':comment})
-
-
-                    
-    self.inp_name = case['input']
+          if option in case:
+            self.inp_content.append({'value':option+" = "+case[option],  'comment':comment})
     
-    shutil.copy(case['exe'], case['direc'])
+      self.inp_name = case['input']
+      self.write_file(self.inp_name,self.inp_content)      
     
-    self.write_file(self.inp_name,self.inp_content)
+
+   
     
    # if 'copy_files' in case:
    #   for cpfile in case['copy_files']:
@@ -189,6 +198,7 @@ class TACCRun(Run):
   def prep_file(self,case): 
     mesh_name = case['mesh'].split("/")[-1]
     prep_name = case['prep'].split("/")[-1]
+    
     job_name = '_'.join([prep_name,mesh_name,'p'+case['p'],'np'+case['proc']])
     sub_cores = '1'
     run_cores = case['proc']
@@ -197,11 +207,26 @@ class TACCRun(Run):
       self.prep_content = self.sub_header(job_name,case['pqueue'],case['ptime'],sub_cores,case['alloc']) 
       self.prep_header = True
     self.prep_content.append({'value':'cd '+case['direc']           , 'comment':'\n'})
-    self.prep_content.append({'value':'./'+ prep_name +' < prep.in' , 'comment':'\n'})
-                    
-    f = open(case['direc']+'prep.in','w')
-    f.write(run_cores)
-    f.close()
+    if prep_name == 'adcprep':
+      self.prep_content.append({'value':'./'+ prep_name +' < prep1.in' , 'comment':'\n'})      
+      self.prep_content.append({'value':'./'+ prep_name +' < prep2.in' , 'comment':'\n'})      
+    else:  
+      self.prep_content.append({'value':'./'+ prep_name +' < prep.in' , 'comment':'\n'})
+                   
+    if prep_name == 'adcprep':      
+      f = open(case['direc']+'prep1.in','w')
+      f.write(run_cores)
+      f.write('1')
+      f.write('fort.14')
+      f.close()      
+      f = open(case['direc']+'prep2.in','w')
+      f.write(run_cores)
+      f.write('2')
+      f.close()            
+    else:  
+      f = open(case['direc']+'prep.in','w')
+      f.write(run_cores)
+      f.close()
     
     self.prep_name = case['rdirec']+'prep_np'+run_cores+'.sub'  
     self.prep_direc = case['rdirec']   
