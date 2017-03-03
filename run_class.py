@@ -80,8 +80,8 @@ class Run(object):
     
     if exe_name == 'padcirc' or exe_name == 'adcirc':
     
-      subprocess.Popen('ln -s '+grid_file+' '+case['rdirec']+fort.14, stdout=subprocess.PIPE)    
-      subprocess.Popen('ln -s '+forcing_file+' '+case['rdirec']+fort.15, stdout=subprocess.PIPE)
+      subprocess.Popen(['ln','-sf',case['grid_file'],case['rdirec']+'fort.14'], stdout=subprocess.PIPE)    
+      subprocess.Popen(['ln','-sf',case['forcing_file'],case['rdirec']+'fort.15'], stdout=subprocess.PIPE)
     
     else:
     
@@ -217,12 +217,12 @@ class TACCRun(Run):
                    
     if prep_name == 'adcprep':      
       f = open(case['direc']+'prep1.in','w')
-      f.write(run_cores)
-      f.write('1')
+      f.write(run_cores+'\n')
+      f.write('1 \n')
       f.write('fort.14')
       f.close()      
       f = open(case['direc']+'prep2.in','w')
-      f.write(run_cores)
+      f.write(run_cores+'\n')
       f.write('2')
       f.close()            
     else:  
